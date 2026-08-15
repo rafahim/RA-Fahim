@@ -116,6 +116,7 @@ export default function ProjectFormPage() {
       {isSupabaseConfigured() &&
         ((!isEdit && orderReady) || (isEdit && !loading && !error && project)) && (
           <ProjectForm
+            key={id ?? 'new'}
             initialProject={project ?? undefined}
             initialImages={images}
             existingCategories={categories}

@@ -38,7 +38,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (status === 'idle' || status === 'loading' || status === 'unauthenticated') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#071B33]">
+      <div className="flex min-h-screen items-center justify-center bg-[#0A0A0D]">
         <Spinner label="Checking session..." />
       </div>
     );

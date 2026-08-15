@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../hooks/useAuth';
 import { Button, Input } from '../../components/ui';
@@ -17,8 +17,16 @@ export default function LoginPage() {
 
   const sessionExpired = searchParams.get('reason') === 'expired';
 
+  // Side effects (navigation) belong in an effect, not directly in the render
+  // body — calling router.replace() during render can trigger a "Cannot
+  // update a component while rendering a different component" warning.
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/admin');
+    }
+  }, [status, router]);
+
   if (status === 'authenticated') {
-    router.replace('/admin');
     return null;
   }
 
@@ -39,7 +47,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#071B33] px-4 font-kanit text-white">
+    <div className="flex min-h-screen items-center justify-center bg-[#0A0A0D] px-4 font-kanit text-white">
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/[0.03] p-8">
         <h1 className="mb-1 text-xl font-medium">Admin Sign In</h1>
         <p className="mb-6 text-sm text-white/50">Manage your portfolio content.</p>

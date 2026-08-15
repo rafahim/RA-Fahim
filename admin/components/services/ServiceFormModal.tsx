@@ -159,7 +159,7 @@ export default function ServiceFormModal({
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
-              className="h-4 w-4 rounded border-white/20 bg-white/5 accent-[#0077C2]"
+              className="h-4 w-4 rounded border-white/20 bg-white/5 accent-[#4C8DFF]"
             />
             Published (visible on the public site)
           </label>

@@ -115,7 +115,7 @@ export default function ServicesAdminPage() {
           <button
             type="button"
             onClick={openAddForm}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0077C2] px-5 py-2.5 text-sm font-medium tracking-wide text-white outline outline-1 -outline-offset-1 outline-white/20 transition-colors duration-200 hover:bg-[#0077C2]/90"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#4C8DFF] px-5 py-2.5 text-sm font-medium tracking-wide text-white outline outline-1 -outline-offset-1 outline-white/20 transition-colors duration-200 hover:bg-[#4C8DFF]/90"
           >
             <Plus className="h-4 w-4" aria-hidden />
             Add service

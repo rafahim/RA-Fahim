@@ -42,7 +42,7 @@ export default function ImagePreview({
             <div className="flex w-2/3 flex-col items-center gap-1">
               <div className="h-1 w-full overflow-hidden rounded-full bg-white/20">
                 <div
-                  className="h-full rounded-full bg-[#29ABE2] transition-[width] duration-150"
+                  className="h-full rounded-full bg-[#8B7CF6] transition-[width] duration-150"
                   style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
                 />
               </div>
@@ -61,7 +61,7 @@ export default function ImagePreview({
               type="button"
               onClick={onReplace}
               aria-label={replaceLabel}
-              className="rounded-full bg-black/60 p-2 text-white/80 hover:bg-[#0077C2] hover:text-white"
+              className="rounded-full bg-black/60 p-2 text-white/80 hover:bg-[#4C8DFF] hover:text-white"
             >
               <RefreshCw className="h-4 w-4" aria-hidden />
             </button>

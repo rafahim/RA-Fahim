@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAllProjects } from '../../hooks/useContent';
 import { deleteProject, updateProject } from '../../services/projects.service';
+import { fetchImagesForProject } from '../../services/project-images.service';
 import type { ProjectContent } from '../../types/content.types';
 import {
   Spinner,
@@ -26,6 +27,7 @@ import {
 } from '../../components/ui';
 import { isSupabaseConfigured } from '../../lib/env';
 import { logError } from '../../utils/errors';
+import { deleteImage } from '../../utils/cloudinary';
 
 function StatusBadge({ status }: { status: ProjectContent['status'] }) {
   const isPublished = status === 'published';
@@ -107,6 +109,34 @@ export default function ProjectsAdminPage() {
   async function handleDeleteConfirm() {
     if (!deleteTarget) return;
     setDeleting(true);
+
+    // Best-effort Cloudinary cleanup before removing the database row, so
+    // deleting a project doesn't leave orphaned assets behind (the featured
+    // image and every gallery image). This never blocks the actual delete —
+    // a failed asset cleanup is logged, not surfaced as a hard error, since
+    // the project_images rows are removed regardless via ON DELETE CASCADE.
+    if (deleteTarget.featuredImagePublicId) {
+      const cleanup = await deleteImage(deleteTarget.featuredImagePublicId);
+      if (cleanup.error) {
+        logError('ProjectsAdminPage.delete.cleanupFeaturedImage', cleanup.error);
+      }
+    }
+    const imagesResult = await fetchImagesForProject(deleteTarget.id);
+    if (imagesResult.error) {
+      logError('ProjectsAdminPage.delete.loadGalleryImages', imagesResult.error);
+    } else {
+      await Promise.all(
+        imagesResult.data
+          .filter((img) => img.cloudinaryPublicId)
+          .map(async (img) => {
+            const cleanup = await deleteImage(img.cloudinaryPublicId as string);
+            if (cleanup.error) {
+              logError('ProjectsAdminPage.delete.cleanupGalleryImage', cleanup.error);
+            }
+          })
+      );
+    }
+
     const result = await deleteProject(deleteTarget.id);
     setDeleting(false);
     if (result.error) {
@@ -130,7 +160,7 @@ export default function ProjectsAdminPage() {
         </div>
         <Link
           href="/admin/projects/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0077C2] px-5 py-2.5 text-sm font-medium tracking-wide text-white outline outline-1 -outline-offset-1 outline-white/20 transition-colors duration-200 hover:bg-[#0077C2]/90"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#4C8DFF] px-5 py-2.5 text-sm font-medium tracking-wide text-white outline outline-1 -outline-offset-1 outline-white/20 transition-colors duration-200 hover:bg-[#4C8DFF]/90"
         >
           <Plus className="h-4 w-4" aria-hidden />
           Add project

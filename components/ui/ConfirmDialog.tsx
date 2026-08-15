@@ -50,7 +50,7 @@ export default function ConfirmDialog({
       >
         <div
           className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${
-            destructive ? 'bg-red-500/10 text-red-400' : 'bg-[#0077C2]/10 text-[#29ABE2]'
+            destructive ? 'bg-red-500/10 text-red-400' : 'bg-[#4C8DFF]/10 text-[#8B7CF6]'
           }`}
         >
           <AlertTriangle className="h-5 w-5" aria-hidden />

@@ -70,7 +70,7 @@ function NavLinks({
             <Icon className="h-4 w-4 shrink-0" aria-hidden />
             <span className="flex-1">{label}</span>
             {label === 'Messages' && unreadCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#0077C2] px-1.5 text-[11px] font-medium text-white">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#4C8DFF] px-1.5 text-[11px] font-medium text-white">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
@@ -105,9 +105,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const unreadCount = stats?.unreadMessages ?? 0;
 
   return (
-    <div className="min-h-screen bg-[#071B33] font-kanit text-white">
+    <div className="min-h-screen bg-[#0A0A0D] font-kanit text-white">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col justify-between border-r border-white/10 bg-[#071B33] p-6 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col justify-between border-r border-white/10 bg-[#0A0A0D] p-6 lg:flex">
         <div>
           <p className="mb-8 text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
           <NavLinks unreadCount={unreadCount} pathname={pathname} />
@@ -135,7 +135,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileNavOpen(false)}
           />
-          <aside className="relative flex h-full w-72 max-w-[80vw] flex-col justify-between border-r border-white/10 bg-[#071B33] p-6 shadow-2xl animate-[slide-in_0.2s_ease-out]">
+          <aside className="relative flex h-full w-72 max-w-[80vw] flex-col justify-between border-r border-white/10 bg-[#0A0A0D] p-6 shadow-2xl animate-[slide-in_0.2s_ease-out]">
             <div>
               <div className="mb-8 flex items-center justify-between">
                 <p className="text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
@@ -172,7 +172,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       <div className="lg:pl-64">
         {/* Top nav */}
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/10 bg-[#071B33]/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/10 bg-[#0A0A0D]/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
               type="button"

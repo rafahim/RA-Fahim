@@ -13,10 +13,10 @@ function ReadStatusBadge({ isRead }: { isRead: boolean }) {
   return (
     <span
       className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-        isRead ? 'bg-white/10 text-white/50' : 'bg-[#29ABE2]/10 text-[#29ABE2]'
+        isRead ? 'bg-white/10 text-white/50' : 'bg-[#8B7CF6]/10 text-[#8B7CF6]'
       }`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${isRead ? 'bg-white/40' : 'bg-[#29ABE2]'}`} />
+      <span className={`h-1.5 w-1.5 rounded-full ${isRead ? 'bg-white/40' : 'bg-[#8B7CF6]'}`} />
       {isRead ? 'Read' : 'Unread'}
     </span>
   );
@@ -94,7 +94,7 @@ export default function MessagesAdminPage() {
               className={`rounded-lg border px-4 py-3.5 text-sm transition-colors ${
                 message.isRead
                   ? 'border-white/10 bg-white/[0.03]'
-                  : 'border-[#29ABE2]/30 bg-[#29ABE2]/[0.06]'
+                  : 'border-[#8B7CF6]/30 bg-[#8B7CF6]/[0.06]'
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">

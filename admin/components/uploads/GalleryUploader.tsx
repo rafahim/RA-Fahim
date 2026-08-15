@@ -206,7 +206,7 @@ export default function GalleryUploader({
             >
               <div className="h-1 w-2/3 overflow-hidden rounded-full bg-white/20">
                 <div
-                  className="h-full rounded-full bg-[#29ABE2] transition-[width] duration-150"
+                  className="h-full rounded-full bg-[#8B7CF6] transition-[width] duration-150"
                   style={{ width: `${f.progress}%` }}
                 />
               </div>

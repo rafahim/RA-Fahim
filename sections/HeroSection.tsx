@@ -1,8 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import Magnet from '../components/Magnet';
 import ContactButton from '../components/ContactButton';
+import CornerBrackets from '../components/CornerBrackets';
+import AuroraField from '../components/AuroraField';
 import { useAbout, useWebsiteSettings } from '../hooks/useContent';
 
 const NAV_LINKS = ['About', 'Price', 'Projects', 'Contact'];
@@ -13,59 +18,152 @@ const PORTRAIT_URL =
 export default function HeroSection() {
   const { data } = useAbout();
   const { data: siteSettings } = useWebsiteSettings();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const name = data?.name || 'jack';
   const professionalTitle =
     data?.professionalTitle || 'a 3d creator driven by crafting striking and unforgettable projects';
   const portraitUrl = data?.profileImageUrl || PORTRAIT_URL;
 
+  // Lock background scroll while the mobile menu is open so the open
+  // panel doesn't fight the page underneath it.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
   return (
     <section
-      className="relative h-screen flex flex-col"
-      style={{ overflowX: 'clip' }}
+      className="bg-grain relative h-screen flex flex-col"
+      style={{ overflowX: 'clip', background: 'var(--void)' }}
     >
-      <FadeIn delay={0} y={-20} as="nav">
-        <div className="flex justify-between items-center px-6 md:px-10 pt-6 md:pt-8">
-          {siteSettings?.logoUrl && (
-            <img
-              src={siteSettings.logoUrl}
-              alt={siteSettings.websiteTitle || 'Logo'}
-              className="h-7 w-auto sm:h-8 md:h-9"
-            />
-          )}
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              className="text-[#CFE8FB] font-medium uppercase tracking-wider text-sm md:text-lg lg:text-[1.4rem] transition-opacity duration-200 hover:opacity-70"
+      <AuroraField variant="hero" />
+      <div
+        className="absolute inset-0 bg-viewport-grid opacity-[0.35]"
+        style={{ maskImage: 'radial-gradient(circle at 50% 30%, black, transparent 70%)' }}
+        aria-hidden
+      />
+      <CornerBrackets className="m-4 sm:m-6 hidden sm:block" size={26} color="rgba(243,241,234,0.35)" />
+
+      <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
+        <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
+          <div className="flex items-center gap-3">
+            {siteSettings?.logoUrl ? (
+              <img
+                src={siteSettings.logoUrl}
+                alt={siteSettings.websiteTitle || 'Logo'}
+                loading="eager"
+                decoding="async"
+                className="h-7 w-auto sm:h-8 md:h-9"
+              />
+            ) : (
+              <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/70">
+                {String(name).toUpperCase()}.3D
+              </span>
+            )}
+          </div>
+
+          {/* Desktop / tablet nav */}
+          <div className="hidden sm:flex items-center gap-5 md:gap-9">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link}
+                href={`#${link.toLowerCase()}`}
+                className="group relative text-[#F3F1EA] font-medium uppercase tracking-wider text-sm md:text-base"
+              >
+                {link}
+                <span className="absolute -bottom-1 left-0 h-px w-0 bg-[#B9AEFF] transition-all duration-300 ease-out group-hover:w-full" />
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile menu toggle -- a real hamburger/close control rather than
+              shrinking the desktop link row, so tap targets stay comfortable
+              and the links don't compete for space with the logo. */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav-panel"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            className="flex sm:hidden h-10 w-10 items-center justify-center rounded-full text-[#F3F1EA] transition-colors duration-200 active:bg-white/10"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+        {/* Mobile nav panel */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              id="mobile-nav-panel"
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="sm:hidden glass-panel mx-3 mt-2 flex flex-col overflow-hidden rounded-3xl"
             >
-              {link}
-            </a>
-          ))}
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link}
+                  href={`#${link.toLowerCase()}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex min-h-[52px] items-center border-b border-white/5 px-6 text-base font-medium uppercase tracking-wider text-[#F3F1EA] transition-colors duration-200 last:border-b-0 active:bg-white/5"
+                >
+                  {link}
+                </a>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </FadeIn>
+
+      <FadeIn delay={0.1} y={20} className="relative z-10 mt-8 sm:mt-10 md:mt-12 px-6 md:px-10">
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-2 w-2">
+            <span
+              className="absolute inline-flex h-full w-full rounded-full bg-[#4C8DFF]"
+              style={{ animation: 'pulse-ring 2.4s cubic-bezier(0.4,0,0.6,1) infinite' }}
+            />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4C8DFF]" />
+          </span>
+          <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/60">
+            AVAILABLE FOR NEW PROJECTS — 3D CREATOR
+          </span>
         </div>
       </FadeIn>
 
       <FadeIn
-        delay={0.15}
+        delay={0.2}
         y={40}
-        className="overflow-hidden mt-6 sm:mt-4 md:-mt-5"
+        className="relative z-10 overflow-hidden mt-3 sm:mt-3 md:-mt-2"
       >
         <h1 className="hero-heading font-black uppercase tracking-tight leading-none whitespace-nowrap w-full text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]">
           Hi, i&apos;m {name}
         </h1>
       </FadeIn>
 
-      <div className="mt-auto flex justify-between items-end px-6 md:px-10 pb-7 sm:pb-8 md:pb-10">
+      <div className="relative z-10 mt-auto flex justify-between items-end px-6 md:px-10 pb-7 sm:pb-8 md:pb-10">
         <FadeIn delay={0.35} y={20}>
           <p
-            className="text-[#CFE8FB] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[260px]"
+            className="text-[#F3F1EA] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[280px]"
             style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
           >
             {professionalTitle}
           </p>
         </FadeIn>
 
-        <FadeIn delay={0.5} y={20}>
+        <FadeIn delay={0.5} y={20} className="flex items-center gap-3 sm:gap-4">
+          <a
+            href="#projects"
+            className="hidden sm:inline-block rounded-full border border-[#F3F1EA]/25 px-6 py-3.5 sm:px-7 md:px-8 text-xs sm:text-sm font-medium uppercase tracking-widest text-[#F3F1EA]/80 transition-all duration-300 ease-out hover:border-[#F3F1EA]/60 hover:text-[#F3F1EA] active:scale-[0.97]"
+          >
+            View Work
+          </a>
           <ContactButton />
         </FadeIn>
       </div>
@@ -73,22 +171,53 @@ export default function HeroSection() {
       <div
         className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 w-[280px] sm:w-[360px] md:w-[440px] lg:w-[520px]"
       >
-        <FadeIn delay={0.6} y={30}>
-          <Magnet
-            padding={150}
-            strength={3}
-            activeTransition="transform 0.3s ease-out"
-            inactiveTransition="transform 0.6s ease-in-out"
-          >
-            <img
-              src={portraitUrl}
-              alt={`${name}, 3D creator portrait`}
-              className="w-full h-auto select-none"
-              draggable={false}
-            />
+        <FadeIn delay={0.6} y={30} className="relative">
+          <div
+            aria-hidden
+            className="absolute inset-x-[8%] bottom-0 top-[12%] rounded-full"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(139,124,246,0.32) 0%, rgba(139,124,246,0) 68%)',
+              filter: 'blur(28px)',
+            }}
+          />
+          <Magnet padding={150} strength={3}>
+            <div className="relative">
+              <img
+                src={portraitUrl}
+                alt={`${name}, 3D creator portrait`}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="relative w-full h-auto select-none"
+                draggable={false}
+              />
+              <div
+                className="hidden md:flex absolute -right-4 lg:-right-8 top-[18%] items-center gap-2 rounded-full glass-panel px-4 py-2"
+                style={{ animation: 'float-slow 5s ease-in-out infinite' }}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#4C8DFF]" />
+                <span className="font-hud text-[10px] text-[#F3F1EA]/70">RENDER.OK</span>
+              </div>
+            </div>
           </Magnet>
         </FadeIn>
       </div>
+
+      <FadeIn
+        delay={0.9}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:flex flex-col items-center gap-2"
+      >
+        <span className="font-hud text-[9px] tracking-[0.3em] text-[#F3F1EA]/40 [writing-mode:vertical-rl]">
+          SCROLL
+        </span>
+        <span className="relative h-8 w-px overflow-hidden bg-[#F3F1EA]/15">
+          <span
+            className="absolute inset-x-0 top-0 h-2 bg-[#B9AEFF]"
+            style={{ animation: 'scroll-cue 1.8s ease-in-out infinite' }}
+          />
+        </span>
+      </FadeIn>
     </section>
   );
 }

@@ -10,7 +10,9 @@ import './globals.css';
  * exactly like `index.html` + `useSiteMeta` did in the Vite app.
  */
 export const metadata: Metadata = {
-  title: 'Jack -- 3D Creator',
+  title: 'Jack — Creative Developer & 3D Artist',
+  description:
+    'Jack is a creative developer and 3D artist crafting striking, unforgettable digital work.',
   icons: {
     icon: '/favicon.svg',
   },
@@ -23,11 +25,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body style={{ background: '#07070a' }}>
         <ErrorBoundary>{children}</ErrorBoundary>
       </body>
     </html>

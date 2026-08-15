@@ -217,7 +217,7 @@ export default function ProjectForm({
             onChange={(e) => setCategory(e.target.value)}
             placeholder="e.g. Interior Design"
             required
-            className="rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#29ABE2]"
+            className="rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#8B7CF6]"
           />
           <datalist id="project-category-suggestions">
             {existingCategories.map((c) => (

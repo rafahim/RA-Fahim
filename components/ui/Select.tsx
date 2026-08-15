@@ -23,7 +23,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
         <select
           id={id}
           ref={ref}
-          className={`w-full appearance-none rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 pr-10 text-sm text-white outline-none transition-colors focus:border-[#29ABE2] ${className}`}
+          className={`w-full appearance-none rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 pr-10 text-sm text-white outline-none transition-colors focus:border-[#8B7CF6] ${className}`}
           {...rest}
         >
           {children}

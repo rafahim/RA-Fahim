@@ -7,7 +7,7 @@ interface LiveProjectButtonProps {
 }
 
 export default function LiveProjectButton({ className = '', href }: LiveProjectButtonProps) {
-  const sharedClassName = `rounded-full border-2 border-[#CFE8FB] px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base font-medium uppercase tracking-widest text-[#CFE8FB] transition-colors duration-200 hover:bg-[#CFE8FB]/10 ${className}`;
+  const sharedClassName = `rounded-full border border-white/25 px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base font-medium uppercase tracking-widest text-[#F3F1EA] transition-all duration-200 hover:border-[#8B7CF6]/60 hover:bg-white/[0.06] ${className}`;
 
   if (href) {
     return (

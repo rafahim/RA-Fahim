@@ -10,7 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
   primary:
-    'text-white outline outline-1 -outline-offset-1 outline-white/20 bg-[#0077C2] hover:bg-[#0077C2]/90',
+    'text-white outline outline-1 -outline-offset-1 outline-white/20 bg-[#4C8DFF] hover:bg-[#4C8DFF]/90',
   secondary:
     'text-white/80 outline outline-1 -outline-offset-1 outline-white/20 bg-white/5 hover:bg-white/10',
   ghost: 'text-white/60 hover:text-white',

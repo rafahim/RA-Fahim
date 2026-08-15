@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, type CSSProperties } from 'react';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion';
 
 interface AnimatedTextProps {
   text: string;
@@ -33,29 +33,31 @@ function Char({ char, index, total, progress }: CharProps) {
   );
 }
 
-export default function AnimatedText({
-  text,
-  className,
-  style,
-}: AnimatedTextProps) {
+export default function AnimatedText({ text, className, style }: AnimatedTextProps) {
   const ref = useRef<HTMLParagraphElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start 0.8', 'end 0.2'],
   });
+
+  // With reduced motion, skip the per-character scroll reveal entirely --
+  // it's a scroll-linked effect that can feel disorienting -- and just
+  // render the plain, fully-visible text.
+  if (prefersReducedMotion) {
+    return (
+      <p ref={ref} className={className} style={style}>
+        {text}
+      </p>
+    );
+  }
 
   const chars = text.split('');
 
   return (
     <p ref={ref} className={className} style={style}>
       {chars.map((char, i) => (
-        <Char
-          key={i}
-          char={char}
-          index={i}
-          total={chars.length}
-          progress={scrollYProgress}
-        />
+        <Char key={i} char={char} index={i} total={chars.length} progress={scrollYProgress} />
       ))}
     </p>
   );

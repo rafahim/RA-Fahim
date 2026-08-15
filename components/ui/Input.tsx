@@ -22,7 +22,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <input
         id={id}
         ref={ref}
-        className={`rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#29ABE2] ${className}`}
+        className={`rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#8B7CF6] ${className}`}
         {...rest}
       />
       {error && <p className="text-xs text-red-400">{error}</p>}

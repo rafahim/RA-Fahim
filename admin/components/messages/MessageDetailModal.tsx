@@ -48,11 +48,11 @@ export default function MessageDetailModal({
           </div>
           <span
             className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-              message.isRead ? 'bg-white/10 text-white/50' : 'bg-[#29ABE2]/10 text-[#29ABE2]'
+              message.isRead ? 'bg-white/10 text-white/50' : 'bg-[#8B7CF6]/10 text-[#8B7CF6]'
             }`}
           >
             <span
-              className={`h-1.5 w-1.5 rounded-full ${message.isRead ? 'bg-white/40' : 'bg-[#29ABE2]'}`}
+              className={`h-1.5 w-1.5 rounded-full ${message.isRead ? 'bg-white/40' : 'bg-[#8B7CF6]'}`}
             />
             {message.isRead ? 'Read' : 'Unread'}
           </span>

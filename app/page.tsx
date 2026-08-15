@@ -17,7 +17,7 @@ export default function HomePage() {
   useSiteMeta();
 
   return (
-    <div className="bg-[#071B33]" style={{ overflowX: 'clip' }}>
+    <div className="bg-[#0A0A0D]" style={{ overflowX: 'clip' }}>
       <HeroSection />
       <MarqueeSection />
       <AboutSection />

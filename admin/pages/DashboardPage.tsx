@@ -42,7 +42,7 @@ export default function DashboardPage() {
       label: 'Total Projects',
       value: stats?.totalProjects ?? 0,
       icon: FolderKanban,
-      accent: 'text-[#29ABE2]',
+      accent: 'text-[#8B7CF6]',
     },
     {
       label: 'Published Projects',
@@ -54,7 +54,7 @@ export default function DashboardPage() {
       label: 'Total Services',
       value: stats?.totalServices ?? 0,
       icon: Wrench,
-      accent: 'text-[#0077C2]',
+      accent: 'text-[#4C8DFF]',
     },
     {
       label: 'Total Messages',
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             href={to}
             className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-sm text-white/80 transition-colors hover:border-white/25 hover:bg-white/[0.06] hover:text-white"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0077C2]/15 text-[#29ABE2]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#4C8DFF]/15 text-[#8B7CF6]">
               <Icon className="h-4 w-4" aria-hidden />
             </span>
             {label}
