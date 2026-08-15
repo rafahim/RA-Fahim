@@ -1,54 +1,122 @@
-# React + TypeScript + Vite
+# Jack — 3D Creator Portfolio (Next.js)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A full-stack portfolio site with a public 3D-creator showcase and a
+Supabase-backed admin panel, built with **Next.js (App Router)**,
+**TypeScript**, **Tailwind CSS**, **Framer Motion**, **Supabase**, and
+**Cloudinary**.
 
-Currently, two official plugins are available:
+> This project was migrated from a Vite + React SPA to Next.js. The
+> public design, all animations, and every admin feature were preserved
+> — only the framework, routing, and auth plumbing changed. See
+> `MIGRATION_REPORT.md` for the full list of what changed and why.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- **Next.js 15** (App Router, TypeScript)
+- **Tailwind CSS**
+- **Framer Motion** for animations
+- **Supabase** (Postgres + Auth) via `@supabase/ssr`
+- **Cloudinary** for image hosting (signed uploads, admin-only deletes)
+- **Vercel** for hosting
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting started
 
-## Deploying (Vercel)
+### 1. Install dependencies
 
-Vite inlines `VITE_`-prefixed env vars into the JS bundle **at build time**,
-not at runtime. On Vercel:
-
-1. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and the Cloudinary
-   `VITE_` vars in Project Settings → Environment Variables — for every
-   environment you deploy (Production/Preview), before triggering a build.
-   Adding them after a build won't affect that build's output; redeploy.
-2. Never add `SUPABASE_SERVICE_ROLE_KEY` (or any non-`VITE_` secret) to a
-   Vercel environment that a client-side build reads from — it must only
-   be used from a trusted server context (e.g. a Vercel serverless/edge
-   function), never imported into `src/`.
-3. `vercel.json` already rewrites all paths to `/index.html`, so deep links
-   like `/admin` and `/admin/login` work on refresh/direct visit, not just
-   client-side navigation.
-4. Supabase session persistence uses the browser's `localStorage`, so
-   signed-in sessions survive refreshes and reopening the tab identically
-   on Vercel and localhost — it isn't tied to the hosting environment.
-5. Admin accounts and access are managed entirely in Supabase (see
-   `supabase/README.md`) — nothing admin-related needs Vercel-specific
-   configuration.
-
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### 2. Configure environment variables
+
+Copy `.env.example` to `.env.local` and fill in real values:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Where it's used | Safe in browser? |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous/public key | Yes (RLS enforces access) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only admin verification (`/api/cloudinary/*`, middleware) | **No — server only** |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes |
+| `CLOUDINARY_API_KEY` | Signing uploads server-side | **No — server only** |
+| `CLOUDINARY_API_SECRET` | Signing uploads server-side | **No — server only** |
+
+Only variables prefixed `NEXT_PUBLIC_` are ever sent to the browser —
+that's a Next.js guarantee. Everything else stays on the server.
+
+### 3. Supabase setup
+
+This app expects the **existing** Supabase project/database to already
+have the schema in `supabase/migrations/`. If you're pointing at a fresh
+project, apply those migrations (via the Supabase SQL editor or CLI) and
+make sure Row Level Security policies are in place before going live.
+
+An admin user must exist in the `admin_users` table (referencing a real
+Supabase Auth user) to be able to sign in to `/admin`.
+
+### 4. Cloudinary setup
+
+No new Cloudinary account is needed — this app signs uploads and deletes
+server-side using `CLOUDINARY_API_KEY`/`CLOUDINARY_API_SECRET`, so any
+existing Cloudinary account works as long as the cloud name and keys are
+set correctly.
+
+### 5. Local development
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000` for the public site and
+`http://localhost:3000/admin/login` for the admin panel.
+
+### 6. Production build
+
+```bash
+npm run build
+npm start
+```
+
+## Project structure
+
+```
+app/                    Next.js App Router routes
+  page.tsx              Public homepage
+  admin/                 Admin routes (login, dashboard, projects, etc.)
+  api/cloudinary/        Route Handlers for signed uploads + deletes
+components/             Shared UI (buttons, inputs, toasts, animations)
+sections/                Public homepage sections (Hero, About, Projects...)
+admin/                   Admin-only layout, pages, and feature components
+lib/                     Supabase browser/server clients, env helpers
+lib/server/              Server-only helpers (Cloudinary signing, admin auth)
+services/                Typed Supabase data-access functions
+hooks/                   Data-fetching and auth hooks
+types/                   Shared TypeScript types (incl. generated DB types)
+supabase/migrations/     SQL migrations for the existing database schema
+middleware.ts            Refreshes the Supabase session + guards /admin/*
+```
+
+## Deploying to Vercel
+
+1. Push this repository to GitHub.
+2. Import it in Vercel.
+3. Add the environment variables from the table above in the Vercel
+   project settings (Production + Preview).
+4. Deploy — Vercel auto-detects Next.js, no extra configuration needed.
+
+Every route (including `/admin/projects/[id]/edit`) works on direct
+load/refresh since routing is handled natively by the App Router — no
+SPA-fallback rewrites are required.
+
+## Admin login
+
+Admin accounts are provisioned directly in the database
+(`admin_users` table referencing a Supabase Auth user) — there is no
+public sign-up flow. To create the first admin:
+
+1. Create a user in Supabase Auth (dashboard or `supabase.auth.admin.createUser`).
+2. Insert a row into `admin_users` with that user's `id`.
+3. Sign in at `/admin/login`.
