@@ -51,6 +51,22 @@ body,
   background: var(--void);
 }
 
+/* Global safety net: nothing on the site (a section, heading, image, or
+   animation) should ever be able to force a horizontal scrollbar. Individual
+   sections already clip their own decorative/animated content, but this
+   catches anything unexpected instead of letting the whole page scroll
+   sideways.
+   `clip` (not `hidden`) matches the convention already used elsewhere in
+   this codebase (see `HeroSection`/`app/page.tsx`, which set
+   `overflowX: 'clip'`) — unlike `hidden`, it doesn't force the paired
+   `overflow-y` to `auto`, so it can't change body into a scroll container
+   and interfere with the `position: sticky` project cards. */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 body {
   font-family: 'Inter', ui-sans-serif, sans-serif;
   color: var(--ice);

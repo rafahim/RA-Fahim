@@ -89,38 +89,38 @@ export default function AboutSection() {
           </span>
         </FadeIn>
 
-        <FadeIn delay={0} y={40}>
+        <FadeIn delay={0} y={40} className="w-full max-w-full px-2">
           <h2
-            className="hero-heading font-black uppercase leading-none tracking-tight"
-            style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
+            className="hero-heading font-black uppercase leading-none tracking-tight break-words [overflow-wrap:anywhere]"
+            style={{ fontSize: 'clamp(2.25rem, 12vw, 160px)' }}
           >
             {heading}
           </h2>
         </FadeIn>
 
-        <div className="flex flex-col items-center gap-14 sm:gap-16 md:gap-20 max-w-3xl">
+        <div className="flex w-full flex-col items-center gap-14 sm:gap-16 md:gap-20 max-w-3xl px-1">
           <AnimatedText
             text={description}
-            className="text-[#F3F1EA] font-medium text-center leading-relaxed max-w-[560px]"
+            className="w-full text-[#F3F1EA] font-medium text-center leading-relaxed max-w-[560px] break-words [overflow-wrap:anywhere]"
             style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }}
           />
 
           {(experience || additionalInfo) && (
             <FadeIn delay={0.05} className="w-full">
-              <div className="glass-panel rounded-3xl px-6 py-6 sm:px-10 sm:py-8 flex flex-col sm:flex-row items-center gap-6 sm:gap-10 sm:divide-x sm:divide-white/10">
+              <div className="glass-panel w-full max-w-full rounded-3xl px-6 py-6 sm:px-10 sm:py-8 flex flex-col sm:flex-row items-center gap-6 sm:gap-10 sm:divide-x sm:divide-white/10">
                 {experience && (
-                  <div className="flex flex-col items-center gap-1 sm:pr-10">
+                  <div className="flex flex-shrink-0 flex-col items-center gap-1 sm:pr-10">
                     <span
-                      className="hero-heading font-black leading-none"
+                      className="hero-heading font-black leading-none break-words [overflow-wrap:anywhere]"
                       style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)' }}
                     >
                       {experience}
                     </span>
-                    <span className="font-hud text-[10px] text-[#F3F1EA]/45">EXPERIENCE</span>
+                    <span className="font-hud text-[10px] text-[#F3F1EA]/45 text-center">EXPERIENCE</span>
                   </div>
                 )}
                 {additionalInfo && (
-                  <p className="text-[#F3F1EA]/60 font-light text-center sm:text-left leading-relaxed max-w-[420px] sm:pl-10 text-sm sm:text-base">
+                  <p className="min-w-0 flex-1 text-[#F3F1EA]/60 font-light text-center sm:text-left leading-relaxed max-w-[420px] sm:pl-10 text-sm sm:text-base break-words [overflow-wrap:anywhere]">
                     {additionalInfo}
                   </p>
                 )}

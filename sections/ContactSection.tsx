@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import {
@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  ArrowUpRight,
 } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import AuroraField from '../components/AuroraField';
@@ -37,29 +38,52 @@ const ICON_BY_LABEL: Record<string, LucideIcon> = {
   LinkedIn: Linkedin,
 };
 
+// Clear, action-oriented CTA copy per platform, instead of just restating
+// the raw contact value (which is shown as smaller supporting text).
+const CTA_LABEL_BY_LABEL: Record<string, string> = {
+  Email: 'Send an Email',
+  Phone: 'Call Me',
+  WhatsApp: 'Chat on WhatsApp',
+  Facebook: 'Visit Facebook',
+  Instagram: 'Follow on Instagram',
+  LinkedIn: 'Connect on LinkedIn',
+  Behance: 'View on Behance',
+};
+
 interface ContactLinkProps {
   label: string;
   value: string;
   href: string;
 }
 
-function ContactLink({ label, value, href }: ContactLinkProps) {
+/** A premium, unmistakably-clickable CTA button for a single contact channel. */
+function ContactCTAButton({ label, value, href }: ContactLinkProps) {
   const Icon = ICON_BY_LABEL[label] ?? Link2;
+  const ctaLabel = CTA_LABEL_BY_LABEL[label] ?? `Visit ${label}`;
 
   return (
     <a
       href={href}
       target={href.startsWith('http') ? '_blank' : undefined}
       rel={href.startsWith('http') ? 'noreferrer' : undefined}
-      className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#8B7CF6]/40 hover:bg-white/[0.06] active:translate-y-0 active:duration-100"
+      className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-white/12 bg-white/[0.03] px-5 py-4 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#8B7CF6]/50 hover:bg-white/[0.07] hover:shadow-[0_16px_40px_-16px_rgba(76,141,255,0.35)] active:translate-y-0 active:duration-100"
     >
-      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/5 text-[#B9AEFF] transition-colors duration-300 group-hover:bg-[#4C8DFF]/20">
-        <Icon size={17} strokeWidth={1.75} />
+      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-white transition-all duration-300 group-hover:scale-105"
+        style={{
+          background: 'linear-gradient(135deg, rgba(76,141,255,0.35), rgba(139,124,246,0.35))',
+          border: '1px solid rgba(185,174,255,0.35)',
+        }}
+      >
+        <Icon size={18} strokeWidth={1.75} />
       </span>
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="font-hud text-[9px] uppercase tracking-widest text-white/40">{label}</span>
-        <span className="truncate text-sm text-[#F3F1EA]">{value}</span>
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-sm font-semibold uppercase tracking-wide text-[#F3F1EA]">{ctaLabel}</span>
+        <span className="truncate text-xs text-[#F3F1EA]/45">{value}</span>
       </span>
+      <ArrowUpRight
+        size={18}
+        className="flex-shrink-0 text-[#B9AEFF]/70 transition-all duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#B9AEFF]"
+      />
     </a>
   );
 }
@@ -73,6 +97,12 @@ export default function ContactSection() {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
+
+  // Belt-and-braces duplicate-submit guard: the submit button is already
+  // `disabled` while `submitting` is true, but a ref check here also
+  // covers the brief window before that re-render commits (e.g. a fast
+  // double Enter-key press) and survives across re-renders/remounts.
+  const isSubmittingRef = useRef(false);
 
   const links: ContactLinkProps[] = [];
   if (data?.email) links.push({ label: 'Email', value: data.email, href: `mailto:${data.email}` });
@@ -91,28 +121,56 @@ export default function ContactSection() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (isSubmittingRef.current) return;
+
     if (!isSupabaseConfigured()) {
       setStatus('error');
       setStatusMessage('This form is not available right now — please reach out directly instead.');
       return;
     }
 
+    isSubmittingRef.current = true;
     setSubmitting(true);
     setStatus('idle');
 
-    const result = await submitMessage({
-      name: name.trim(),
-      email: email.trim(),
-      message: message.trim(),
-    });
+    const payload = { name: name.trim(), email: email.trim(), message: message.trim() };
 
+    // Save to Supabase (source of truth — this is what shows up in the
+    // admin Messages inbox) and email the notification via SMTP in
+    // parallel. The email step is a convenience layered on top: if it
+    // fails, the visitor's message is still safely saved and the
+    // submission is still reported as a success.
+    const [supabaseResult, emailResult] = await Promise.allSettled([
+      submitMessage(payload),
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }),
+    ]);
+
+    isSubmittingRef.current = false;
     setSubmitting(false);
 
-    if (result.error) {
-      logError('ContactSection.submit', result.error);
+    const saveFailed = supabaseResult.status === 'rejected' || Boolean(supabaseResult.value.error);
+
+    if (saveFailed) {
+      const error =
+        supabaseResult.status === 'fulfilled' ? supabaseResult.value.error : undefined;
+      logError('ContactSection.submit', error ?? supabaseResult);
       setStatus('error');
-      setStatusMessage(result.error.message);
+      setStatusMessage(error?.message || 'Could not send your message. Please try again.');
       return;
+    }
+
+    if (emailResult.status === 'rejected' || !emailResult.value.ok) {
+      // Non-critical: log it, but don't block the visitor's success state
+      // since their message is safely saved either way.
+      logError(
+        'ContactSection.emailNotification',
+        emailResult.status === 'rejected' ? emailResult.reason : `HTTP ${emailResult.value.status}`
+      );
     }
 
     setStatus('success');
@@ -214,6 +272,8 @@ export default function ContactSection() {
               <AnimatePresence>
                 {status !== 'idle' && (
                   <motion.div
+                    role="status"
+                    aria-live="polite"
                     initial={{ opacity: 0, y: -6, height: 0 }}
                     animate={{ opacity: 1, y: 0, height: 'auto' }}
                     exit={{ opacity: 0, y: -6, height: 0 }}
@@ -237,9 +297,13 @@ export default function ContactSection() {
           </FadeIn>
 
           <FadeIn delay={0.2} x={40} y={0}>
-            <div className="flex h-full flex-col gap-3">
+            <div className="flex h-full flex-col">
               {links.length > 0 ? (
-                links.map((link) => <ContactLink key={link.label} {...link} />)
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+                  {links.map((link) => (
+                    <ContactCTAButton key={link.label} {...link} />
+                  ))}
+                </div>
               ) : (
                 <p className="text-sm text-white/40">Contact details coming soon.</p>
               )}

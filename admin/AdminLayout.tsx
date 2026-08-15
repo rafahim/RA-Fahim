@@ -16,7 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { useDashboardStats } from '../hooks/useContent';
+import { useDashboardStats, useWebsiteSettings } from '../hooks/useContent';
 import { useToast } from '../components/ui';
 
 interface AdminLayoutProps {
@@ -42,6 +42,38 @@ const navItems: NavItem[] = [
 
 function isActivePath(pathname: string, item: NavItem): boolean {
   return item.end ? pathname === item.to : pathname.startsWith(item.to);
+}
+
+interface AdminBrandProps {
+  websiteTitle?: string | null;
+  logoUrl?: string | null;
+  className?: string;
+  onNavigate?: () => void;
+}
+
+/**
+ * The website's own name/logo, shown in the admin shell and linking back
+ * to the admin dashboard. Uses next/link so it's a client-side
+ * navigation (no full page reload), same as the rest of the admin nav.
+ */
+function AdminBrand({ websiteTitle, logoUrl, className = '', onNavigate }: AdminBrandProps) {
+  return (
+    <Link
+      href="/admin"
+      onClick={onNavigate}
+      aria-label="Go to admin dashboard"
+      className={`flex min-w-0 items-center gap-2 transition-opacity duration-200 hover:opacity-80 ${className}`}
+    >
+      {logoUrl ? (
+        <img src={logoUrl} alt={websiteTitle || 'Website logo'} className="h-6 w-auto flex-shrink-0 sm:h-7" />
+      ) : (
+        <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-[#4C8DFF]/20 text-[11px] font-bold text-[#B9AEFF] sm:h-7 sm:w-7">
+          {(websiteTitle || 'P').trim().charAt(0).toUpperCase()}
+        </span>
+      )}
+      <span className="truncate text-sm font-semibold text-white">{websiteTitle || 'Portfolio'}</span>
+    </Link>
+  );
 }
 
 function NavLinks({
@@ -87,6 +119,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const { showSuccess } = useToast();
   const { data: stats } = useDashboardStats();
+  const { data: siteSettings } = useWebsiteSettings();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Close the mobile drawer whenever the route changes.
@@ -109,6 +142,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col justify-between border-r border-white/10 bg-[#0A0A0D] p-6 lg:flex">
         <div>
+          <AdminBrand
+            websiteTitle={siteSettings?.websiteTitle}
+            logoUrl={siteSettings?.logoUrl}
+            className="mb-6"
+          />
           <p className="mb-8 text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
           <NavLinks unreadCount={unreadCount} pathname={pathname} />
         </div>
@@ -137,8 +175,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           />
           <aside className="relative flex h-full w-72 max-w-[80vw] flex-col justify-between border-r border-white/10 bg-[#0A0A0D] p-6 shadow-2xl animate-[slide-in_0.2s_ease-out]">
             <div>
-              <div className="mb-8 flex items-center justify-between">
-                <p className="text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <AdminBrand
+                  websiteTitle={siteSettings?.websiteTitle}
+                  logoUrl={siteSettings?.logoUrl}
+                  onNavigate={() => setMobileNavOpen(false)}
+                />
                 <button
                   type="button"
                   onClick={() => setMobileNavOpen(false)}
@@ -148,6 +190,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <X className="h-5 w-5" aria-hidden />
                 </button>
               </div>
+              <p className="mb-4 text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
               <NavLinks
                 unreadCount={unreadCount}
                 pathname={pathname}
@@ -173,7 +216,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <div className="lg:pl-64">
         {/* Top nav */}
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/10 bg-[#0A0A0D]/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileNavOpen(true)}
@@ -182,7 +225,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             >
               <Menu className="h-5 w-5" aria-hidden />
             </button>
-            <h2 className="text-base font-medium sm:text-lg">{currentLabel}</h2>
+            <AdminBrand
+              websiteTitle={siteSettings?.websiteTitle}
+              logoUrl={siteSettings?.logoUrl}
+              className="lg:hidden"
+            />
+            <span className="hidden h-5 w-px bg-white/10 lg:block" aria-hidden />
+            <h2 className="truncate text-base font-medium sm:text-lg">{currentLabel}</h2>
           </div>
 
           <div className="flex items-center gap-4">

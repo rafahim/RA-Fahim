@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
+import FitText from '../components/FitText';
 import Magnet from '../components/Magnet';
 import ContactButton from '../components/ContactButton';
 import CornerBrackets from '../components/CornerBrackets';
@@ -51,7 +53,11 @@ export default function HeroSection() {
 
       <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
         <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
-          <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            aria-label="Go to homepage"
+            className="flex items-center gap-3 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
+          >
             {siteSettings?.logoUrl ? (
               <img
                 src={siteSettings.logoUrl}
@@ -65,7 +71,7 @@ export default function HeroSection() {
                 {String(name).toUpperCase()}.3D
               </span>
             )}
-          </div>
+          </Link>
 
           {/* Desktop / tablet nav */}
           <div className="hidden sm:flex items-center gap-5 md:gap-9">
@@ -140,11 +146,14 @@ export default function HeroSection() {
       <FadeIn
         delay={0.2}
         y={40}
-        className="relative z-10 overflow-hidden mt-3 sm:mt-3 md:-mt-2"
+        className="relative z-10 mt-3 sm:mt-3 md:-mt-2 px-6 md:px-10"
       >
-        <h1 className="hero-heading font-black uppercase tracking-tight leading-none whitespace-nowrap w-full text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]">
+        <FitText
+          as="h1"
+          className="hero-heading font-black uppercase tracking-tight leading-none text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
+        >
           Hi, i&apos;m {name}
-        </h1>
+        </FitText>
       </FadeIn>
 
       <div className="relative z-10 mt-auto flex justify-between items-end px-6 md:px-10 pb-7 sm:pb-8 md:pb-10">
@@ -192,32 +201,10 @@ export default function HeroSection() {
                 className="relative w-full h-auto select-none"
                 draggable={false}
               />
-              <div
-                className="hidden md:flex absolute -right-4 lg:-right-8 top-[18%] items-center gap-2 rounded-full glass-panel px-4 py-2"
-                style={{ animation: 'float-slow 5s ease-in-out infinite' }}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#4C8DFF]" />
-                <span className="font-hud text-[10px] text-[#F3F1EA]/70">RENDER.OK</span>
-              </div>
             </div>
           </Magnet>
         </FadeIn>
       </div>
-
-      <FadeIn
-        delay={0.9}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:flex flex-col items-center gap-2"
-      >
-        <span className="font-hud text-[9px] tracking-[0.3em] text-[#F3F1EA]/40 [writing-mode:vertical-rl]">
-          SCROLL
-        </span>
-        <span className="relative h-8 w-px overflow-hidden bg-[#F3F1EA]/15">
-          <span
-            className="absolute inset-x-0 top-0 h-2 bg-[#B9AEFF]"
-            style={{ animation: 'scroll-cue 1.8s ease-in-out infinite' }}
-          />
-        </span>
-      </FadeIn>
     </section>
   );
 }
