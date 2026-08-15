@@ -5,8 +5,6 @@ export interface DashboardStats {
   totalProjects: number;
   publishedProjects: number;
   totalServices: number;
-  totalMessages: number;
-  unreadMessages: number;
 }
 
 /**
@@ -18,25 +16,16 @@ export async function fetchDashboardStats(): Promise<ServiceResult<DashboardStat
   try {
     const client = requireSupabase();
 
-    const [totalProjects, publishedProjects, totalServices, totalMessages, unreadMessages] =
-      await Promise.all([
-        client.from('projects').select('*', { count: 'exact', head: true }),
-        client
-          .from('projects')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'published'),
-        client.from('services').select('*', { count: 'exact', head: true }),
-        client.from('messages').select('*', { count: 'exact', head: true }),
-        client.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false),
-      ]);
+    const [totalProjects, publishedProjects, totalServices] = await Promise.all([
+      client.from('projects').select('*', { count: 'exact', head: true }),
+      client
+        .from('projects')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published'),
+      client.from('services').select('*', { count: 'exact', head: true }),
+    ]);
 
-    const results = [
-      totalProjects,
-      publishedProjects,
-      totalServices,
-      totalMessages,
-      unreadMessages,
-    ];
+    const results = [totalProjects, publishedProjects, totalServices];
     const firstError = results.find((r) => r.error)?.error;
     if (firstError) return fail({ message: firstError.message, code: firstError.code });
 
@@ -44,8 +33,6 @@ export async function fetchDashboardStats(): Promise<ServiceResult<DashboardStat
       totalProjects: totalProjects.count ?? 0,
       publishedProjects: publishedProjects.count ?? 0,
       totalServices: totalServices.count ?? 0,
-      totalMessages: totalMessages.count ?? 0,
-      unreadMessages: unreadMessages.count ?? 0,
     });
   } catch (err) {
     return fail(toServiceError(err, 'Could not load dashboard statistics.'));

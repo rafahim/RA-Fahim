@@ -108,3 +108,46 @@ export const projects: Project[] = [
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee.png&w=1280&q=85',
   },
 ];
+
+export interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+}
+
+// Placeholder testimonials -- replace with real client quotes before
+// launch (name, role/company, and a 2-3 line quote each).
+export const testimonials: Testimonial[] = [
+  {
+    quote:
+      "Jack turned a vague brief into a render that sold the product before it even shipped. Fast, precise, and genuinely fun to collaborate with.",
+    name: 'Client Name',
+    role: 'Founder, Studio Name',
+  },
+  {
+    quote:
+      'The attention to lighting and material detail was next level. Every revision came back better than what we asked for.',
+    name: 'Client Name',
+    role: 'Creative Director, Agency Name',
+  },
+  {
+    quote:
+      "Deadlines, communication, quality -- all solid. We've since brought Jack onto every 3D piece of our pipeline.",
+    name: 'Client Name',
+    role: 'Product Lead, Company Name',
+  },
+];
+
+export interface SkillLevel {
+  name: string;
+  level: 'Expert' | 'Advanced' | 'Intermediate';
+  value: number;
+}
+
+export const skillLevels: SkillLevel[] = [
+  { name: 'Blender', level: 'Expert', value: 95 },
+  { name: 'Cinema 4D', level: 'Expert', value: 92 },
+  { name: 'Octane Render', level: 'Advanced', value: 85 },
+  { name: 'Redshift', level: 'Advanced', value: 82 },
+  { name: 'After Effects', level: 'Intermediate', value: 68 },
+];

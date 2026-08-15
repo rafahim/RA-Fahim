@@ -9,6 +9,8 @@ import Magnet from '../components/Magnet';
 import ContactButton from '../components/ContactButton';
 import CornerBrackets from '../components/CornerBrackets';
 import AuroraField from '../components/AuroraField';
+import Viewport3D from '../components/Viewport3D';
+import HudTelemetry from '../components/HudTelemetry';
 import { useAbout, useWebsiteSettings } from '../hooks/useContent';
 
 const NAV_LINKS = ['About', 'Price', 'Projects', 'Contact'];
@@ -49,27 +51,29 @@ export default function HeroSection() {
         aria-hidden
       />
       <CornerBrackets className="m-4 sm:m-6 hidden sm:block" size={26} color="rgba(243,241,234,0.35)" />
+      <HudTelemetry className="hidden md:block" />
 
       <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
         <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
           <a
             href="/"
             aria-label="Go to homepage"
-            className="flex items-center gap-3 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
+            className="flex min-w-0 items-center gap-2.5 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
           >
-            {siteSettings?.logoUrl ? (
+            {siteSettings?.logoUrl && (
               <img
                 src={siteSettings.logoUrl}
-                alt={siteSettings.websiteTitle || 'Logo'}
+                alt=""
                 loading="eager"
                 decoding="async"
-                className="h-7 w-auto sm:h-8 md:h-9"
+                className="h-7 w-auto flex-shrink-0 sm:h-8 md:h-9"
               />
-            ) : (
-              <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/70">
-                {String(name).toUpperCase()}.3D
-              </span>
             )}
+            <span className="truncate font-hud text-[10px] sm:text-xs text-[#F3F1EA]/70">
+              {siteSettings?.websiteTitle
+                ? siteSettings.websiteTitle.toUpperCase()
+                : `${String(name).toUpperCase()}.3D`}
+            </span>
           </a>
 
           {/* Desktop / tablet nav */}
@@ -78,10 +82,10 @@ export default function HeroSection() {
               <a
                 key={link}
                 href={`#${link.toLowerCase()}`}
-                className="group relative text-[#F3F1EA] font-medium uppercase tracking-wider text-sm md:text-base"
+                className="glitch-hover group relative text-[#F3F1EA] font-medium uppercase tracking-wider text-sm md:text-base"
               >
                 {link}
-                <span className="absolute -bottom-1 left-0 h-px w-0 bg-[#B9AEFF] transition-all duration-300 ease-out group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 h-px w-0 bg-[var(--render-amber)] transition-all duration-300 ease-out group-hover:w-full" />
               </a>
             ))}
           </div>
@@ -127,14 +131,37 @@ export default function HeroSection() {
         </AnimatePresence>
       </FadeIn>
 
+      {/* Live 3D viewport widget -- the first hand-built thing a visitor
+          sees, steering toward the cursor and flipping from wireframe to
+          a flat-shaded render on hover, exactly like switching viewport
+          shading modes in Blender/C4D. */}
+      <FadeIn
+        delay={0.45}
+        y={0}
+        x={0}
+        className="pointer-events-auto absolute right-4 top-20 z-20 hidden md:block sm:right-6 sm:top-24"
+      >
+        <div className="glass-panel relative rounded-3xl p-3">
+          <span className="absolute left-4 top-3 font-hud text-[9px] text-[#F3F1EA]/40">
+            {'// LIVE VIEWPORT'}
+          </span>
+          <div className="mt-6 flex items-center justify-center">
+            <Viewport3D size={150} />
+          </div>
+          <span className="absolute bottom-3 right-4 font-hud text-[9px] text-[#F3F1EA]/30">
+            HOVER TO SHADE
+          </span>
+        </div>
+      </FadeIn>
+
       <FadeIn delay={0.1} y={20} className="relative z-10 mt-8 sm:mt-10 md:mt-12 px-6 md:px-10">
         <div className="flex items-center gap-3">
           <span className="relative flex h-2 w-2">
             <span
-              className="absolute inline-flex h-full w-full rounded-full bg-[#4C8DFF]"
+              className="absolute inline-flex h-full w-full rounded-full bg-[var(--render-amber)]"
               style={{ animation: 'pulse-ring 2.4s cubic-bezier(0.4,0,0.6,1) infinite' }}
             />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4C8DFF]" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--render-amber)]" />
           </span>
           <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/60">
             AVAILABLE FOR NEW PROJECTS — 3D CREATOR

@@ -78,9 +78,10 @@ export async function POST(request: Request) {
   }
 
   if (!isSmtpConfigured()) {
-    // Not an error the visitor needs to see — the message is still saved
-    // via Supabase separately. Just tell the caller the email step was
-    // skipped so it can decide whether to mention it.
+    // SMTP is the ONLY delivery path for a submission (see file header) —
+    // if it isn't configured, the message has nowhere to go. Tell the
+    // caller so it can surface that clearly to the visitor, instead of
+    // showing a false "sent" success.
     return NextResponse.json({ sent: false, reason: 'SMTP not configured' }, { status: 200 });
   }
 

@@ -5,7 +5,10 @@ import MarqueeSection from '../sections/MarqueeSection';
 import AboutSection from '../sections/AboutSection';
 import ServicesSection from '../sections/ServicesSection';
 import ProjectsSection from '../sections/ProjectsSection';
+import TestimonialsSection from '../sections/TestimonialsSection';
 import ContactSection from '../sections/ContactSection';
+import RenderBootLoader from '../components/RenderBootLoader';
+import CustomCursor from '../components/CustomCursor';
 import { useSiteMeta } from '../hooks/useSiteMeta';
 
 /**
@@ -18,11 +21,14 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#0A0A0D]" style={{ overflowX: 'clip' }}>
+      <RenderBootLoader />
+      <CustomCursor />
       <HeroSection />
       <MarqueeSection />
       <AboutSection />
       <ServicesSection />
       <ProjectsSection />
+      <TestimonialsSection />
       <ContactSection />
     </div>
   );

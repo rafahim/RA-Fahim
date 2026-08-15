@@ -3,7 +3,9 @@
 import FadeIn from '../components/FadeIn';
 import AnimatedText from '../components/AnimatedText';
 import ContactButton from '../components/ContactButton';
+import SkillBar from '../components/SkillBar';
 import { useAbout } from '../hooks/useContent';
+import { skillLevels } from '../lib/data';
 
 const MOON_ICON =
   'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png';
@@ -16,8 +18,6 @@ const GROUP_134 =
 
 const ABOUT_COPY =
   "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!";
-
-const TOOLS = ['Blender', 'Cinema 4D', 'Octane', 'Redshift', 'After Effects'];
 
 export default function AboutSection() {
   const { data } = useAbout();
@@ -128,15 +128,21 @@ export default function AboutSection() {
             </FadeIn>
           )}
 
-          <FadeIn delay={0.08} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            {TOOLS.map((tool) => (
-              <span
-                key={tool}
-                className="font-hud text-[10px] sm:text-[11px] text-[#F3F1EA]/50 rounded-full border border-[#F3F1EA]/15 px-3.5 py-1.5"
-              >
-                {tool}
+          <FadeIn delay={0.08} className="w-full max-w-lg">
+            <div className="glass-panel w-full rounded-3xl px-6 py-6 sm:px-8 sm:py-7 flex flex-col gap-5">
+              <span className="font-hud text-[9px] text-[#F3F1EA]/40 self-start">
+                {'// TOOL PROFICIENCY'}
               </span>
-            ))}
+              {skillLevels.map((skill, i) => (
+                <SkillBar
+                  key={skill.name}
+                  name={skill.name}
+                  level={skill.level}
+                  value={skill.value}
+                  delay={i * 0.06}
+                />
+              ))}
+            </div>
           </FadeIn>
 
           <FadeIn delay={0.1}>

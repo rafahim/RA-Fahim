@@ -1,15 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  FolderKanban,
-  CheckCircle,
-  Wrench,
-  Mail,
-  AlertCircle,
-  User,
-  MessageSquare,
-} from 'lucide-react';
+import { FolderKanban, CheckCircle, Wrench, User } from 'lucide-react';
 import { useDashboardStats } from '../../hooks/useContent';
 import { isSupabaseConfigured } from '../../lib/env';
 import { Skeleton, ErrorState, EmptyState } from '../../components/ui';
@@ -31,7 +23,6 @@ const quickActions: QuickAction[] = [
   { label: 'Add Project', to: '/admin/projects/new', icon: FolderKanban },
   { label: 'Add Service', to: '/admin/services', icon: Wrench },
   { label: 'Edit About', to: '/admin/about', icon: User },
-  { label: 'View Messages', to: '/admin/messages', icon: MessageSquare },
 ];
 
 export default function DashboardPage() {
@@ -56,18 +47,6 @@ export default function DashboardPage() {
       icon: Wrench,
       accent: 'text-[#4C8DFF]',
     },
-    {
-      label: 'Total Messages',
-      value: stats?.totalMessages ?? 0,
-      icon: Mail,
-      accent: 'text-white/70',
-    },
-    {
-      label: 'Unread Messages',
-      value: stats?.unreadMessages ?? 0,
-      icon: AlertCircle,
-      accent: 'text-amber-400',
-    },
   ];
 
   return (
@@ -85,8 +64,8 @@ export default function DashboardPage() {
 
       {/* Stats */}
       {loading && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
               className="rounded-xl border border-white/10 bg-white/[0.03] p-5"
@@ -104,7 +83,7 @@ export default function DashboardPage() {
       )}
 
       {!loading && !error && stats && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map(({ label, value, icon: Icon, accent }) => (
             <div
               key={label}
@@ -132,7 +111,7 @@ export default function DashboardPage() {
       <h2 className="mb-3 mt-10 text-sm font-medium uppercase tracking-widest text-white/50">
         Quick Actions
       </h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {quickActions.map(({ label, to, icon: Icon }) => (
           <Link
             key={label}

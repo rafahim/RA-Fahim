@@ -91,22 +91,6 @@ export interface WebsiteSettingsContent {
   updatedAt: string;
 }
 
-export interface MessageContent {
-  id: string;
-  name: string;
-  email: string;
-  message: string;
-  isRead: boolean;
-  createdAt: string;
-}
-
-/** Payload for the public contact form — deliberately narrower than MessageContent. */
-export interface NewMessageInput {
-  name: string;
-  email: string;
-  message: string;
-}
-
 export interface MarqueeImageContent {
   id: string;
   imageUrl: string;

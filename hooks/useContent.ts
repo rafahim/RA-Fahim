@@ -9,7 +9,6 @@ import {
 } from '../services/projects.service';
 import { fetchPublishedServices, fetchAllServices } from '../services/services.service';
 import { fetchDashboardStats, type DashboardStats } from '../services/dashboard.service';
-import { fetchMessages } from '../services/messages.service';
 import { fetchAbout } from '../services/about.service';
 import { fetchContactSettings } from '../services/contact.service';
 import { fetchWebsiteSettings } from '../services/website.service';
@@ -20,7 +19,6 @@ import type {
   ProjectContent,
   ProjectWithImages,
   ServiceContent,
-  MessageContent,
   AboutContent,
   ContactSettingsContent,
   WebsiteSettingsContent,
@@ -82,7 +80,7 @@ export function useAllServices(): AsyncState<ServiceContent[]> & { refetch: () =
   return useAsync(fetcher, []);
 }
 
-/** Admin dashboard counters (total/published projects, services, messages, unread). */
+/** Admin dashboard counters (total/published projects, services). */
 export function useDashboardStats(): AsyncState<DashboardStats> & { refetch: () => void } {
   const fetcher = useMemo(
     () => () =>
@@ -93,18 +91,8 @@ export function useDashboardStats(): AsyncState<DashboardStats> & { refetch: () 
               totalProjects: 0,
               publishedProjects: 0,
               totalServices: 0,
-              totalMessages: 0,
-              unreadMessages: 0,
             })
           ),
-    []
-  );
-  return useAsync(fetcher, []);
-}
-
-export function useMessages(): AsyncState<MessageContent[]> & { refetch: () => void } {
-  const fetcher = useMemo(
-    () => () => (isSupabaseConfigured() ? fetchMessages() : Promise.resolve(ok([]))),
     []
   );
   return useAsync(fetcher, []);

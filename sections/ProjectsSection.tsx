@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'fr
 import { ArrowUpRight } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import CornerBrackets from '../components/CornerBrackets';
+import ProcessReveal, { type ProcessStage } from '../components/ProcessReveal';
 import { useProjectCards } from '../hooks/useContent';
 import { projects as fallbackProjects } from '../lib/data';
 import type { ProjectWithImages } from '../types/content.types';
@@ -40,6 +41,20 @@ function toDisplayProjects(cmsProjects: ProjectWithImages[]): DisplayProject[] {
       liveUrl: project.projectUrl,
     };
   });
+}
+
+/**
+ * Builds the hover "process" sequence for the large preview slot out of
+ * whatever images the project already has -- ordered as an early pass
+ * through a final one, and labelled as such (see ProcessReveal's docs
+ * for how to get a fully accurate wireframe/clay pass).
+ */
+function toProcessStages(project: DisplayProject): ProcessStage[] {
+  return [
+    { src: project.col1Image1, label: 'Wireframe' },
+    { src: project.col1Image2, label: 'Clay Render' },
+    { src: project.col2Image, label: 'Final Render' },
+  ];
 }
 
 interface PreviewImageProps {
@@ -118,7 +133,11 @@ function MobileProjectCard({ project, totalCards }: { project: DisplayProject; t
           />
         </div>
         <div className="w-[60%]">
-          <PreviewImage src={project.col2Image} alt={`${project.name} preview 3`} className="h-full w-full rounded-[28px]" />
+          <ProcessReveal
+            stages={toProcessStages(project)}
+            alt={project.name}
+            className="relative h-full w-full rounded-[28px]"
+          />
         </div>
       </div>
 
@@ -176,7 +195,7 @@ function MobileProjectsCarousel({ projects }: { projects: DisplayProject[] }) {
             <span
               key={`dot-${project.number}-${project.name}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === activeIndex ? 'w-6 bg-[#8B7CF6]' : 'w-1.5 bg-white/20'
+                i === activeIndex ? 'w-6 bg-[var(--render-amber)]' : 'w-1.5 bg-white/20'
               }`}
             />
           ))}
@@ -231,7 +250,7 @@ function ProjectCard({ project, index, totalCards, isMobile }: ProjectCardProps)
           scale: prefersReducedMotion ? 1 : scale,
           boxShadow: `0 ${depth}px ${depth * 3.2}px -${depth * 0.6}px rgba(2,2,4,0.65)`,
         }}
-        className="group relative h-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] border border-white/12 bg-[#0b0b0f] p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8 transition-colors duration-500 ease-out hover:border-[#8B7CF6]/50"
+        className="group relative h-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] border border-white/12 bg-[#0b0b0f] p-4 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8 transition-colors duration-500 ease-out hover:border-[var(--render-amber-soft)]"
       >
         <CornerBrackets
           size={20}
@@ -264,7 +283,7 @@ function ProjectCard({ project, index, totalCards, isMobile }: ProjectCardProps)
                 href={project.liveUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base font-medium uppercase tracking-widest text-[#F3F1EA] transition-all duration-300 ease-out hover:border-[#8B7CF6]/60 hover:bg-white/[0.06] hover:scale-[1.03] active:scale-[0.97]"
+                className="inline-flex items-center gap-2 rounded-full border border-white/25 px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base font-medium uppercase tracking-widest text-[#F3F1EA] transition-all duration-300 ease-out hover:border-[var(--render-amber-soft)] hover:bg-white/[0.06] hover:scale-[1.03] active:scale-[0.97]"
               >
                 Live Project
                 <ArrowUpRight
@@ -299,10 +318,10 @@ function ProjectCard({ project, index, totalCards, isMobile }: ProjectCardProps)
             className="w-[60%]"
             style={{ y: prefersReducedMotion ? 0 : imageParallax }}
           >
-            <PreviewImage
-              src={project.col2Image}
-              alt={`${project.name} preview 3`}
-              className="w-full h-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px]"
+            <ProcessReveal
+              stages={toProcessStages(project)}
+              alt={project.name}
+              className="relative w-full h-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px]"
             />
           </motion.div>
         </div>

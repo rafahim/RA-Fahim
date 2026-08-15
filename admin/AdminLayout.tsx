@@ -9,7 +9,6 @@ import {
   Wrench,
   User,
   Mail,
-  MessageSquare,
   Settings,
   LogOut,
   Menu,
@@ -17,7 +16,7 @@ import {
   GalleryHorizontal,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { useDashboardStats, useWebsiteSettings } from '../hooks/useContent';
+import { useWebsiteSettings } from '../hooks/useContent';
 import { useToast } from '../components/ui';
 
 interface AdminLayoutProps {
@@ -38,7 +37,6 @@ const navItems: NavItem[] = [
   { to: '/admin/marquee', label: 'Marquee', icon: GalleryHorizontal, end: false },
   { to: '/admin/about', label: 'About', icon: User, end: false },
   { to: '/admin/contact', label: 'Contact', icon: Mail, end: false },
-  { to: '/admin/messages', label: 'Messages', icon: MessageSquare, end: false },
   { to: '/admin/settings', label: 'Settings', icon: Settings, end: false },
 ];
 
@@ -80,11 +78,9 @@ function AdminBrand({ websiteTitle, logoUrl, className = '', onNavigate }: Admin
 
 function NavLinks({
   onNavigate,
-  unreadCount,
   pathname,
 }: {
   onNavigate?: () => void;
-  unreadCount: number;
   pathname: string;
 }) {
   return (
@@ -103,11 +99,6 @@ function NavLinks({
           >
             <Icon className="h-4 w-4 shrink-0" aria-hidden />
             <span className="flex-1">{label}</span>
-            {label === 'Messages' && unreadCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#4C8DFF] px-1.5 text-[11px] font-medium text-white">
-                {unreadCount > 99 ? '99+' : unreadCount}
-              </span>
-            )}
           </Link>
         );
       })}
@@ -120,7 +111,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { showSuccess } = useToast();
-  const { data: stats } = useDashboardStats();
   const { data: siteSettings } = useWebsiteSettings();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -137,8 +127,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const currentLabel = navItems.find((item) => isActivePath(pathname, item))?.label ?? 'Dashboard';
 
-  const unreadCount = stats?.unreadMessages ?? 0;
-
   return (
     <div className="min-h-screen bg-[#0A0A0D] font-kanit text-white">
       {/* Desktop sidebar */}
@@ -150,7 +138,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             className="mb-6"
           />
           <p className="mb-8 text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
-          <NavLinks unreadCount={unreadCount} pathname={pathname} />
+          <NavLinks pathname={pathname} />
         </div>
 
         <div className="flex flex-col gap-3 border-t border-white/10 pt-4">
@@ -194,7 +182,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </div>
               <p className="mb-4 text-sm uppercase tracking-widest text-white/50">Admin Panel</p>
               <NavLinks
-                unreadCount={unreadCount}
                 pathname={pathname}
                 onNavigate={() => setMobileNavOpen(false)}
               />

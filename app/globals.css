@@ -33,6 +33,14 @@
 
   --hairline: rgba(243, 241, 234, 0.1);
   --hairline-strong: rgba(243, 241, 234, 0.18);
+
+  /* Render-engine accent — a warm amber/orange, the color of a progress
+     bar mid-render in Blender/Cinema 4D/Octane, used for HUD readouts,
+     skill meters, and interactive-state accents alongside the existing
+     electric blue/violet pair (kept for gradients/backgrounds). */
+  --render-amber: #ff8a3d;
+  --render-amber-soft: rgba(255, 138, 61, 0.4);
+  --render-amber-dim: rgba(255, 138, 61, 0.14);
 }
 
 * {
@@ -216,4 +224,86 @@ body {
    this covers WebKit/Blink (Chrome, Safari, Edge). */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   RENDER-SOFTWARE HUD LAYER — telemetry blink, chromatic-fringe hover,
+   glitch text, custom-cursor plumbing, and the boot-time render bar.
+   Grouped here rather than inline so the "3D-viewport" visual language
+   stays reusable across sections instead of being redefined per-file.
+   ──────────────────────────────────────────────────────────────────── */
+
+@keyframes hud-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.hud-blink {
+  animation: hud-blink 1.6s steps(2, jump-none) infinite;
+}
+
+/* Subtle chromatic/RGB-channel fringe on hover — the way a render
+   preview or camera lens shows color separation at high contrast edges.
+   Wrap an image block in `.chroma-hover` to opt in. */
+.chroma-hover {
+  position: relative;
+  isolation: isolate;
+}
+.chroma-hover::before,
+.chroma-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+  z-index: 2;
+}
+.chroma-hover::before {
+  background: rgba(255, 64, 64, 0.4);
+  transform: translate(0, 0);
+}
+.chroma-hover::after {
+  background: rgba(64, 170, 255, 0.4);
+  transform: translate(0, 0);
+}
+.chroma-hover:hover::before,
+.chroma-hover:focus-within::before {
+  opacity: 0.16;
+  transform: translate(-3px, 0);
+}
+.chroma-hover:hover::after,
+.chroma-hover:focus-within::after {
+  opacity: 0.16;
+  transform: translate(3px, 0);
+}
+
+/* Cheap two-channel text glitch for interactive HUD-voice labels —
+   reads as a render/camera color-split rather than a horror-movie
+   glitch, because the offset is tiny and only appears on hover. */
+.glitch-hover {
+  position: relative;
+  transition: text-shadow 0.25s ease-out;
+}
+.glitch-hover:hover,
+.glitch-hover:focus-visible {
+  text-shadow: -1.5px 0 rgba(255, 90, 90, 0.7), 1.5px 0 rgba(90, 180, 255, 0.7);
+}
+
+/* Custom cursor — the real cursor is hidden only once CustomCursor has
+   mounted and confirmed a fine pointer, via this class on <html>, so
+   nothing goes missing if JS fails to run. */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
+
+@keyframes render-bar-scan {
+  0% { background-position: 0 0; }
+  100% { background-position: 28px 0; }
+}
+
+@keyframes cursor-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
 }
