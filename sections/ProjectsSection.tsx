@@ -74,6 +74,119 @@ function PreviewImage({ src, alt, className, style }: PreviewImageProps) {
   );
 }
 
+/**
+ * Mobile card: a plain, static card (no scroll-driven stacking/scale —
+ * that effect needs a tall vertical scroll runway per card, which doesn't
+ * fit on small screens) meant to sit inside a horizontally swipeable
+ * carousel instead, so every project is reachable with a simple swipe.
+ */
+function MobileProjectCard({ project, totalCards }: { project: DisplayProject; totalCards: number }) {
+  return (
+    <div
+      className="group relative flex h-[64vh] w-[86vw] flex-shrink-0 snap-center flex-col gap-5 rounded-[36px] border border-white/12 bg-[#0b0b0f] p-4"
+      style={{ boxShadow: '0 18px 60px -20px rgba(2,2,4,0.65)' }}
+    >
+      <CornerBrackets size={20} color="rgba(243,241,234,0.5)" className="m-4" />
+
+      <div className="flex items-center gap-4 flex-wrap">
+        <span className="font-black text-[#F3F1EA] leading-none" style={{ fontSize: 'clamp(2.25rem, 9vw, 3rem)' }}>
+          {project.number}
+        </span>
+        <div className="flex flex-col gap-1">
+          <span className="font-hud text-[10px] text-[#F3F1EA]/45">
+            {project.category.toUpperCase()}
+            {project.year ? ` · ${project.year}` : ''} · {project.number}/{String(totalCards).padStart(2, '0')}
+          </span>
+          <span className="text-[#F3F1EA] font-medium uppercase" style={{ fontSize: 'clamp(1.1rem, 5vw, 1.5rem)' }}>
+            {project.name}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-1 min-h-0 gap-3">
+        <div className="flex w-[40%] flex-col gap-3">
+          <PreviewImage
+            src={project.col1Image1}
+            alt={`${project.name} preview 1`}
+            className="w-full rounded-[28px]"
+            style={{ height: 'clamp(100px, 18vw, 160px)' }}
+          />
+          <PreviewImage
+            src={project.col1Image2}
+            alt={`${project.name} preview 2`}
+            className="w-full flex-1 rounded-[28px]"
+          />
+        </div>
+        <div className="w-[60%]">
+          <PreviewImage src={project.col2Image} alt={`${project.name} preview 3`} className="h-full w-full rounded-[28px]" />
+        </div>
+      </div>
+
+      {project.liveUrl ? (
+        <a
+          href={project.liveUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center justify-center gap-2 self-start rounded-full border border-white/25 px-6 py-3 text-xs font-medium uppercase tracking-widest text-[#F3F1EA] transition-all duration-300 ease-out active:scale-[0.97]"
+        >
+          Live Project
+          <ArrowUpRight size={16} />
+        </a>
+      ) : (
+        <button className="self-start rounded-full border border-white/15 px-6 py-3 text-xs font-medium uppercase tracking-widest text-[#F3F1EA]/40">
+          Live Project
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Horizontally swipeable carousel of all projects, used on mobile. */
+function MobileProjectsCarousel({ projects }: { projects: DisplayProject[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Track which card is centered so the dots below reflect swipe position.
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const cardWidth = track.firstElementChild
+      ? (track.firstElementChild as HTMLElement).getBoundingClientRect().width + 16
+      : 1;
+    const index = Math.round(track.scrollLeft / cardWidth);
+    setActiveIndex(Math.min(Math.max(index, 0), projects.length - 1));
+  };
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div
+        ref={trackRef}
+        onScroll={handleScroll}
+        className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pl-[7vw] pr-[7vw]"
+        style={{ scrollbarWidth: 'none' }}
+      >
+        {projects.map((project) => (
+          <MobileProjectCard key={`${project.number}-${project.name}`} project={project} totalCards={projects.length} />
+        ))}
+      </div>
+
+      {projects.length > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          {projects.map((project, i) => (
+            <span
+              key={`dot-${project.number}-${project.name}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === activeIndex ? 'w-6 bg-[#8B7CF6]' : 'w-1.5 bg-white/20'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+      <p className="text-center font-hud text-[10px] text-[#F3F1EA]/35">{'← SWIPE TO SEE ALL PROJECTS →'}</p>
+    </div>
+  );
+}
+
 interface ProjectCardProps {
   project: DisplayProject;
   index: number;
@@ -235,17 +348,25 @@ export default function ProjectsSection() {
         </h2>
       </FadeIn>
 
-      <div className="max-w-6xl mx-auto flex flex-col gap-10">
-        {displayProjects.map((project, i) => (
-          <ProjectCard
-            key={`${project.number}-${project.name}`}
-            project={project}
-            index={i}
-            totalCards={totalCards}
-            isMobile={isMobile}
-          />
-        ))}
-      </div>
+      {isMobile ? (
+        // Below sm, the scroll-driven stacking effect needs more vertical
+        // runway than a phone screen gives it, so cards after the first
+        // barely become visible. A horizontal swipe carousel instead
+        // guarantees every project is reachable with a simple swipe.
+        <MobileProjectsCarousel projects={displayProjects} />
+      ) : (
+        <div className="max-w-6xl mx-auto flex flex-col gap-10">
+          {displayProjects.map((project, i) => (
+            <ProjectCard
+              key={`${project.number}-${project.name}`}
+              project={project}
+              index={i}
+              totalCards={totalCards}
+              isMobile={isMobile}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

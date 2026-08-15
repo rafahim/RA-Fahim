@@ -6,13 +6,11 @@ import { getSmtpServerConfig, isSmtpConfigured } from '../../../lib/server/env';
  * POST /api/contact
  * Body: { name: string, email: string, message: string }
  *
- * Sends an email notification (via SMTP/nodemailer) to the site owner's
- * inbox whenever a visitor submits the public contact form. This is
- * ADDITIVE to — never a replacement for — saving the message in Supabase
- * (see `services/messages.service.ts`, called separately from
- * `ContactSection`). The message is always readable in the admin panel
- * even if this route fails or SMTP isn't configured; this route only
- * adds the email notification on top of that.
+ * Sends the contact form submission directly to the site owner's inbox
+ * via SMTP/nodemailer. This is the ONLY place a submission goes — nothing
+ * is stored in a database. If SMTP isn't configured, or sending fails,
+ * the message is not delivered anywhere, so `ContactSection` surfaces
+ * that as an error to the visitor.
  *
  * The SMTP password lives only in server-side env vars (see
  * `lib/server/env.ts` / `.env.example`) and never reaches the browser.

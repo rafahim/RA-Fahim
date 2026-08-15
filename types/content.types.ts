@@ -106,3 +106,11 @@ export interface NewMessageInput {
   email: string;
   message: string;
 }
+
+export interface MarqueeImageContent {
+  id: string;
+  imageUrl: string;
+  cloudinaryPublicId: string | null;
+  displayOrder: number;
+  createdAt: string;
+}

@@ -16,6 +16,7 @@
  * - website_settings   Singleton row of site title/SEO/branding.
  * - messages           Contact-form submissions.
  * - admin_users         Allow-list of Supabase Auth users with admin access.
+ * - marquee_images     Scrolling image strip shown below the Hero section.
  */
 
 export type ProjectStatus = 'draft' | 'published';
@@ -308,6 +309,30 @@ export interface Database {
         };
         Update: {
           id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      marquee_images: {
+        Row: {
+          id: string;
+          image_url: string;
+          cloudinary_public_id: string | null;
+          display_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          image_url: string;
+          cloudinary_public_id?: string | null;
+          display_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          image_url?: string;
+          cloudinary_public_id?: string | null;
+          display_order?: number;
           created_at?: string;
         };
         Relationships: [];

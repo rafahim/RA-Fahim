@@ -13,6 +13,7 @@ import { fetchMessages } from '../services/messages.service';
 import { fetchAbout } from '../services/about.service';
 import { fetchContactSettings } from '../services/contact.service';
 import { fetchWebsiteSettings } from '../services/website.service';
+import { fetchMarqueeImages } from '../services/marquee.service';
 import { ok } from '../types/api.types';
 import { useAsync, type AsyncState } from './useAsync';
 import type {
@@ -23,6 +24,7 @@ import type {
   AboutContent,
   ContactSettingsContent,
   WebsiteSettingsContent,
+  MarqueeImageContent,
 } from '../types/content.types';
 
 /**
@@ -124,5 +126,20 @@ export function useWebsiteSettings(): AsyncState<WebsiteSettingsContent> & {
   refetch: () => void;
 } {
   const fetcher = useMemo(() => () => fetchWebsiteSettings(), []);
+  return useAsync(fetcher, []);
+}
+
+/**
+ * The marquee image strip shown below the Hero section. Same function
+ * serves both the public site and the admin management page — there's no
+ * draft/published split, an admin's list IS the public list. Empty (not
+ * an error) when Supabase isn't configured, so the section can fall back
+ * to the bundled placeholder images instead of breaking.
+ */
+export function useMarqueeImages(): AsyncState<MarqueeImageContent[]> & { refetch: () => void } {
+  const fetcher = useMemo(
+    () => () => (isSupabaseConfigured() ? fetchMarqueeImages() : Promise.resolve(ok([]))),
+    []
+  );
   return useAsync(fetcher, []);
 }

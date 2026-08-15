@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  GalleryHorizontal,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useDashboardStats, useWebsiteSettings } from '../hooks/useContent';
@@ -34,6 +35,7 @@ const navItems: NavItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/projects', label: 'Projects', icon: FolderKanban, end: false },
   { to: '/admin/services', label: 'Services', icon: Wrench, end: false },
+  { to: '/admin/marquee', label: 'Marquee', icon: GalleryHorizontal, end: false },
   { to: '/admin/about', label: 'About', icon: User, end: false },
   { to: '/admin/contact', label: 'Contact', icon: Mail, end: false },
   { to: '/admin/messages', label: 'Messages', icon: MessageSquare, end: false },

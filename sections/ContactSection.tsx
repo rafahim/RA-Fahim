@@ -22,8 +22,6 @@ import {
 import FadeIn from '../components/FadeIn';
 import AuroraField from '../components/AuroraField';
 import { useContactSettings } from '../hooks/useContent';
-import { submitMessage } from '../services/messages.service';
-import { isSupabaseConfigured } from '../lib/env';
 import { logError } from '../utils/errors';
 
 const FIELD_CLASS =
@@ -124,53 +122,50 @@ export default function ContactSection() {
 
     if (isSubmittingRef.current) return;
 
-    if (!isSupabaseConfigured()) {
-      setStatus('error');
-      setStatusMessage('This form is not available right now — please reach out directly instead.');
-      return;
-    }
-
     isSubmittingRef.current = true;
     setSubmitting(true);
     setStatus('idle');
 
     const payload = { name: name.trim(), email: email.trim(), message: message.trim() };
 
-    // Save to Supabase (source of truth — this is what shows up in the
-    // admin Messages inbox) and email the notification via SMTP in
-    // parallel. The email step is a convenience layered on top: if it
-    // fails, the visitor's message is still safely saved and the
-    // submission is still reported as a success.
-    const [supabaseResult, emailResult] = await Promise.allSettled([
-      submitMessage(payload),
-      fetch('/api/contact', {
+    // Send the message directly to the site owner's inbox via SMTP.
+    // Nothing is stored anywhere else — this is the only place the
+    // submission goes.
+    let response: Response | null = null;
+    let requestError: unknown = null;
+    try {
+      response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      }),
-    ]);
+      });
+    } catch (err) {
+      requestError = err;
+    }
 
     isSubmittingRef.current = false;
     setSubmitting(false);
 
-    const saveFailed = supabaseResult.status === 'rejected' || Boolean(supabaseResult.value.error);
-
-    if (saveFailed) {
-      const error =
-        supabaseResult.status === 'fulfilled' ? supabaseResult.value.error : undefined;
-      logError('ContactSection.submit', error ?? supabaseResult);
+    if (!response || !response.ok) {
+      let serverMessage: string | undefined;
+      if (response) {
+        const data = await response.json().catch(() => null);
+        serverMessage = data?.error;
+      }
+      logError('ContactSection.submit', requestError ?? serverMessage ?? `HTTP ${response?.status}`);
       setStatus('error');
-      setStatusMessage(error?.message || 'Could not send your message. Please try again.');
+      setStatusMessage(serverMessage || 'Could not send your message. Please try again.');
       return;
     }
 
-    if (emailResult.status === 'rejected' || !emailResult.value.ok) {
-      // Non-critical: log it, but don't block the visitor's success state
-      // since their message is safely saved either way.
-      logError(
-        'ContactSection.emailNotification',
-        emailResult.status === 'rejected' ? emailResult.reason : `HTTP ${emailResult.value.status}`
-      );
+    const data = await response.json().catch(() => null);
+    if (data?.sent === false) {
+      // Route handler accepted the request but email isn't configured
+      // server-side (e.g. missing SMTP env vars).
+      logError('ContactSection.submit', data?.reason ?? 'Email not sent');
+      setStatus('error');
+      setStatusMessage('This form is not available right now — please reach out directly instead.');
+      return;
     }
 
     setStatus('success');

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
@@ -53,7 +52,7 @@ export default function HeroSection() {
 
       <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
         <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
-          <Link
+          <a
             href="/"
             aria-label="Go to homepage"
             className="flex items-center gap-3 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
@@ -71,7 +70,7 @@ export default function HeroSection() {
                 {String(name).toUpperCase()}.3D
               </span>
             )}
-          </Link>
+          </a>
 
           {/* Desktop / tablet nav */}
           <div className="hidden sm:flex items-center gap-5 md:gap-9">
@@ -156,31 +155,12 @@ export default function HeroSection() {
         </FitText>
       </FadeIn>
 
-      <div className="relative z-10 mt-auto flex justify-between items-end px-6 md:px-10 pb-7 sm:pb-8 md:pb-10">
-        <FadeIn delay={0.35} y={20}>
-          <p
-            className="text-[#F3F1EA] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[280px]"
-            style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
-          >
-            {professionalTitle}
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={0.5} y={20} className="flex items-center gap-3 sm:gap-4">
-          <a
-            href="#projects"
-            className="hidden sm:inline-block rounded-full border border-[#F3F1EA]/25 px-6 py-3.5 sm:px-7 md:px-8 text-xs sm:text-sm font-medium uppercase tracking-widest text-[#F3F1EA]/80 transition-all duration-300 ease-out hover:border-[#F3F1EA]/60 hover:text-[#F3F1EA] active:scale-[0.97]"
-          >
-            View Work
-          </a>
-          <ContactButton />
-        </FadeIn>
-      </div>
-
-      <div
-        className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 w-[280px] sm:w-[360px] md:w-[440px] lg:w-[520px]"
-      >
-        <FadeIn delay={0.6} y={30} className="relative">
+      <div className="relative z-10 order-3 flex flex-1 items-center justify-center px-6 sm:absolute sm:inset-auto sm:left-1/2 sm:top-auto sm:order-none sm:flex-none sm:-translate-x-1/2 sm:bottom-0 sm:px-0">
+        <FadeIn
+          delay={0.6}
+          y={30}
+          className="relative w-[64vw] max-w-[300px] sm:w-[360px] md:w-[440px] lg:w-[520px]"
+        >
           <div
             aria-hidden
             className="absolute inset-x-[8%] bottom-0 top-[12%] rounded-full"
@@ -203,6 +183,27 @@ export default function HeroSection() {
               />
             </div>
           </Magnet>
+        </FadeIn>
+      </div>
+
+      <div className="relative z-10 order-4 mt-auto flex justify-between items-end px-6 md:px-10 pb-7 sm:pb-8 md:pb-10">
+        <FadeIn delay={0.35} y={20}>
+          <p
+            className="text-[#F3F1EA] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[280px]"
+            style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
+          >
+            {professionalTitle}
+          </p>
+        </FadeIn>
+
+        <FadeIn delay={0.5} y={20} className="flex items-center gap-3 sm:gap-4">
+          <a
+            href="#projects"
+            className="hidden sm:inline-block rounded-full border border-[#F3F1EA]/25 px-6 py-3.5 sm:px-7 md:px-8 text-xs sm:text-sm font-medium uppercase tracking-widest text-[#F3F1EA]/80 transition-all duration-300 ease-out hover:border-[#F3F1EA]/60 hover:text-[#F3F1EA] active:scale-[0.97]"
+          >
+            View Work
+          </a>
+          <ContactButton />
         </FadeIn>
       </div>
     </section>

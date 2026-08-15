@@ -7,3 +7,4 @@ export * as contactService from './contact.service';
 export * as websiteService from './website.service';
 export * as messagesService from './messages.service';
 export * as dashboardService from './dashboard.service';
+export * as marqueeService from './marquee.service';

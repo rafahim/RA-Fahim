@@ -3,9 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
 import { marqueeRow1, marqueeRow2 } from '../lib/data';
+import { useMarqueeImages } from '../hooks/useContent';
+import { isSupabaseConfigured } from '../lib/env';
 
 function repeated(arr: string[], times: number) {
   return Array.from({ length: times }, () => arr).flat();
+}
+
+/** Splits a flat, admin-ordered image list into two roughly-even rows for the two-row marquee layout. */
+function toRows(urls: string[]): [string[], string[]] {
+  const mid = Math.ceil(urls.length / 2);
+  return [urls.slice(0, mid), urls.slice(mid)];
 }
 
 interface RowProps {
@@ -43,6 +51,8 @@ export default function MarqueeSection() {
   // the DOM (and image decode work) lighter on mobile.
   const [repeatCount, setRepeatCount] = useState(3);
 
+  const { data: cmsImages, loading } = useMarqueeImages();
+
   useEffect(() => {
     const updateRepeatCount = () => setRepeatCount(window.innerWidth < 768 ? 2 : 3);
     updateRepeatCount();
@@ -77,6 +87,21 @@ export default function MarqueeSection() {
     };
   }, [offset, prefersReducedMotion]);
 
+  // While loading, or when Supabase isn't configured at all, fall back to
+  // the bundled placeholder images so the strip is never broken/blank on
+  // first load. Once the CMS has actually responded, though, the admin's
+  // list is authoritative -- including an empty one, which means the whole
+  // section is hidden (an admin who deletes every image wants it gone,
+  // not silently replaced by the old placeholders).
+  const useFallback = loading || !isSupabaseConfigured();
+  const [row1, row2] = useFallback
+    ? [marqueeRow1, marqueeRow2]
+    : toRows((cmsImages ?? []).map((img) => img.imageUrl));
+
+  if (!useFallback && row1.length === 0 && row2.length === 0) {
+    return null;
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -88,8 +113,8 @@ export default function MarqueeSection() {
         style={{ background: 'linear-gradient(180deg, var(--void) 0%, rgba(3,3,5,0) 100%)' }}
       />
       <div className="flex flex-col gap-3 [&_img]:transition-transform [&_img]:duration-500 [&_img]:ease-out [&_img:hover]:scale-[1.03]">
-        <MarqueeRow images={repeated(marqueeRow1, repeatCount)} direction={1} offset={offset} />
-        <MarqueeRow images={repeated(marqueeRow2, repeatCount)} direction={-1} offset={offset} />
+        <MarqueeRow images={repeated(row1, repeatCount)} direction={1} offset={offset} />
+        <MarqueeRow images={repeated(row2, repeatCount)} direction={-1} offset={offset} />
       </div>
     </section>
   );

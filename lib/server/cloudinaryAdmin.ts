@@ -15,6 +15,7 @@ export const CLOUDINARY_UPLOAD_FOLDERS = [
   'portfolio/logo',
   'portfolio/favicon',
   'portfolio/og',
+  'portfolio/marquee',
 ] as const;
 
 export type CloudinaryUploadFolder = (typeof CLOUDINARY_UPLOAD_FOLDERS)[number];

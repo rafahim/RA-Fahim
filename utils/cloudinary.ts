@@ -22,6 +22,7 @@ export const CLOUDINARY_FOLDERS = {
   logo: 'portfolio/logo',
   favicon: 'portfolio/favicon',
   og: 'portfolio/og',
+  marquee: 'portfolio/marquee',
 } as const;
 
 export type CloudinaryFolderKey = keyof typeof CLOUDINARY_FOLDERS;

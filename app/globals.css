@@ -209,3 +209,11 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Hides the scrollbar on horizontally-swipeable elements (e.g. the mobile
+   projects carousel) while keeping them scrollable via touch/trackpad.
+   `scrollbar-width: none` (set inline, Firefox) handles that engine;
+   this covers WebKit/Blink (Chrome, Safari, Edge). */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
