@@ -23,7 +23,7 @@ export default function HeroSection() {
   const { data: siteSettings } = useWebsiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const name = data?.name || 'jack';
+  const name = data?.name?.trim() || 'jack';
   const professionalTitle =
     data?.professionalTitle || 'a 3d creator driven by crafting striking and unforgettable projects';
   const portraitUrl = data?.profileImageUrl || PORTRAIT_URL;
@@ -70,9 +70,9 @@ export default function HeroSection() {
               />
             )}
             <span className="truncate font-hud text-[10px] sm:text-xs text-[#F3F1EA]/70">
-              {siteSettings?.websiteTitle
-                ? siteSettings.websiteTitle.toUpperCase()
-                : `${String(name).toUpperCase()}.3D`}
+              {siteSettings?.websiteTitle?.trim()
+                ? siteSettings.websiteTitle.trim().toUpperCase()
+                : `${String(name).trim().toUpperCase() || 'JACK'}.3D`}
             </span>
           </a>
 
