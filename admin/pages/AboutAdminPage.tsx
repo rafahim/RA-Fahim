@@ -15,6 +15,7 @@ export default function AboutAdminPage() {
   const [name, setName] = useState('');
   const [professionalTitle, setProfessionalTitle] = useState('');
   const [experience, setExperience] = useState('');
+  const [availabilityStatus, setAvailabilityStatus] = useState('');
   const [aboutHeading, setAboutHeading] = useState('');
   const [aboutDescription, setAboutDescription] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
@@ -27,6 +28,7 @@ export default function AboutAdminPage() {
     setName(data.name ?? '');
     setProfessionalTitle(data.professionalTitle ?? '');
     setExperience(data.experience ?? '');
+    setAvailabilityStatus(data.availabilityStatus ?? '');
     setAboutHeading(data.aboutHeading ?? '');
     setAboutDescription(data.aboutDescription ?? '');
     setAdditionalInfo(data.additionalInfo ?? '');
@@ -43,6 +45,7 @@ export default function AboutAdminPage() {
       name: name.trim() || null,
       professional_title: professionalTitle.trim() || null,
       experience: experience.trim() || null,
+      availability_status: availabilityStatus.trim() || null,
       about_heading: aboutHeading.trim() || null,
       about_description: aboutDescription.trim() || null,
       additional_info: additionalInfo.trim() || null,
@@ -114,6 +117,14 @@ export default function AboutAdminPage() {
             value={professionalTitle}
             onChange={(e) => setProfessionalTitle(e.target.value)}
             placeholder="A 3D creator driven by crafting striking and unforgettable projects"
+          />
+
+          <Input
+            id="availabilityStatus"
+            label="Hero availability badge"
+            value={availabilityStatus}
+            onChange={(e) => setAvailabilityStatus(e.target.value)}
+            placeholder="Available for new projects — 3D Creator"
           />
 
           <div className="border-t border-white/10 pt-6">

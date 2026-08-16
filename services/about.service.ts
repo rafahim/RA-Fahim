@@ -8,6 +8,7 @@ function toAboutContent(row: Tables<'about'>): AboutContent {
     name: row.name,
     professionalTitle: row.professional_title,
     experience: row.experience,
+    availabilityStatus: row.availability_status,
     aboutHeading: row.about_heading,
     aboutDescription: row.about_description,
     additionalInfo: row.additional_info,

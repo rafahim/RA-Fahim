@@ -14,6 +14,8 @@ import {
   Menu,
   X,
   GalleryHorizontal,
+  Gauge,
+  Quote,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useWebsiteSettings } from '../hooks/useContent';
@@ -34,6 +36,8 @@ const navItems: NavItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/projects', label: 'Projects', icon: FolderKanban, end: false },
   { to: '/admin/services', label: 'Services', icon: Wrench, end: false },
+  { to: '/admin/skills', label: 'Tool Proficiency', icon: Gauge, end: false },
+  { to: '/admin/testimonials', label: 'Testimonials', icon: Quote, end: false },
   { to: '/admin/marquee', label: 'Marquee', icon: GalleryHorizontal, end: false },
   { to: '/admin/about', label: 'About', icon: User, end: false },
   { to: '/admin/contact', label: 'Contact', icon: Mail, end: false },

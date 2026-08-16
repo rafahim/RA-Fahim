@@ -1,16 +1,24 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import HeroSection from '../sections/HeroSection';
-import MarqueeSection from '../sections/MarqueeSection';
-import AboutSection from '../sections/AboutSection';
-import ServicesSection from '../sections/ServicesSection';
-import ProjectsSection from '../sections/ProjectsSection';
-import TestimonialsSection from '../sections/TestimonialsSection';
-import ContactSection from '../sections/ContactSection';
 import RenderBootLoader from '../components/RenderBootLoader';
-import CustomCursor from '../components/CustomCursor';
 import { useSiteMeta } from '../hooks/useSiteMeta';
 import { useAbout, useWebsiteSettings } from '../hooks/useContent';
+
+// Everything below the fold (and the purely-cosmetic custom cursor) is
+// code-split into its own chunk instead of the initial bundle. The Hero
+// still renders/paints immediately; these hydrate a beat later, which
+// keeps first paint + time-to-interactive fast without changing what's
+// on the page. `ssr: true` (the default) is kept so content is still
+// present in the HTML for SEO -- only the client JS is deferred.
+const CustomCursor = dynamic(() => import('../components/CustomCursor'), { ssr: false });
+const MarqueeSection = dynamic(() => import('../sections/MarqueeSection'));
+const AboutSection = dynamic(() => import('../sections/AboutSection'));
+const ServicesSection = dynamic(() => import('../sections/ServicesSection'));
+const ProjectsSection = dynamic(() => import('../sections/ProjectsSection'));
+const TestimonialsSection = dynamic(() => import('../sections/TestimonialsSection'));
+const ContactSection = dynamic(() => import('../sections/ContactSection'));
 
 /**
  * The public portfolio homepage. Design, section order, and animations

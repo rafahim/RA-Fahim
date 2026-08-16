@@ -27,43 +27,6 @@ import { logError } from '../utils/errors';
 const FIELD_CLASS =
   'w-full rounded-xl border border-white/15 bg-white/[0.04] pl-11 pr-5 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-200 ease-out focus:border-[var(--render-amber)] focus:bg-white/[0.07]';
 
-const PROJECT_TYPES = ['3D Modeling', 'Rendering', 'Motion Design', 'Branding', 'Web / UI', 'Other'];
-const BUDGET_RANGES = ['< $500', '$500 – $1.5k', '$1.5k – $5k', '$5k+'];
-const TIMELINES = ['ASAP', '2–4 weeks', '1–2 months', 'Flexible'];
-
-interface PillGroupProps {
-  label: string;
-  options: string[];
-  value: string;
-  onChange: (value: string) => void;
-}
-
-/** A row of selectable pill options -- a structured-quote question rendered in the site's own visual voice instead of a native <select>. */
-function PillGroup({ label, options, value, onChange }: PillGroupProps) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="font-hud text-[9px] text-[#F3F1EA]/40">{label.toUpperCase()}</span>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => onChange(option)}
-            aria-pressed={value === option}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-medium uppercase tracking-wide transition-all duration-200 ease-out ${
-              value === option
-                ? 'border-[var(--render-amber)] bg-[var(--render-amber-dim)] text-[#F3F1EA]'
-                : 'border-white/15 text-[#F3F1EA]/50 hover:border-white/30 hover:text-[#F3F1EA]/80'
-            }`}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const ICON_BY_LABEL: Record<string, LucideIcon> = {
   Email: Mail,
   Phone: Phone,
@@ -129,14 +92,9 @@ export default function ContactSection() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [projectType, setProjectType] = useState('');
-  const [budgetRange, setBudgetRange] = useState('');
-  const [timeline, setTimeline] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
-
-  const quoteFieldsComplete = !!projectType && !!budgetRange && !!timeline;
 
   // Belt-and-braces duplicate-submit guard: the submit button is already
   // `disabled` while `submitting` is true, but a ref check here also
@@ -163,21 +121,12 @@ export default function ContactSection() {
     e.preventDefault();
 
     if (isSubmittingRef.current) return;
-    if (!quoteFieldsComplete) {
-      setStatus('error');
-      setStatusMessage('Please pick a project type, budget range, and timeline first.');
-      return;
-    }
 
     isSubmittingRef.current = true;
     setSubmitting(true);
     setStatus('idle');
 
-    // Fold the structured quote fields into the message body so the
-    // existing /api/contact endpoint (name/email/message) doesn't need
-    // a schema change -- the recipient still sees them clearly labelled.
-    const structuredMessage = `Project type: ${projectType}\nBudget range: ${budgetRange}\nTimeline: ${timeline}\n\n${message.trim()}`;
-    const payload = { name: name.trim(), email: email.trim(), message: structuredMessage };
+    const payload = { name: name.trim(), email: email.trim(), message: message.trim() };
 
     // Send the message directly to the site owner's inbox via SMTP.
     // Nothing is stored anywhere else — this is the only place the
@@ -224,9 +173,6 @@ export default function ContactSection() {
     setName('');
     setEmail('');
     setMessage('');
-    setProjectType('');
-    setBudgetRange('');
-    setTimeline('');
   }
 
   return (
@@ -244,7 +190,6 @@ export default function ContactSection() {
 
       <div className="relative z-10">
         <FadeIn className="flex flex-col items-center gap-4">
-          <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/45">{"// LET'S TALK"}</span>
           <h2
             className="hero-heading font-black uppercase text-center leading-none tracking-tight"
             style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
@@ -263,12 +208,6 @@ export default function ContactSection() {
         <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2 md:gap-10">
           <FadeIn delay={0.15} x={-40} y={0}>
             <form onSubmit={handleSubmit} className="glass-panel flex h-full flex-col gap-5 rounded-3xl p-6 sm:p-8">
-              <PillGroup label="Project type" options={PROJECT_TYPES} value={projectType} onChange={setProjectType} />
-              <PillGroup label="Budget range" options={BUDGET_RANGES} value={budgetRange} onChange={setBudgetRange} />
-              <PillGroup label="Timeline" options={TIMELINES} value={timeline} onChange={setTimeline} />
-
-              <div className="h-px w-full bg-white/10" aria-hidden />
-
               <div className="relative">
                 <User size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                 <input
@@ -305,7 +244,7 @@ export default function ContactSection() {
 
               <button
                 type="submit"
-                disabled={submitting || !quoteFieldsComplete}
+                disabled={submitting}
                 className="mt-2 inline-flex items-center justify-center gap-2 self-start rounded-full px-8 py-3 text-sm font-medium uppercase tracking-widest text-white border border-white/15 transition-all duration-300 ease-out hover:border-white/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
                 style={{
                   background: 'linear-gradient(123deg, #0a0a12 7%, #d0722f 45%, #ff8a3d 100%)',

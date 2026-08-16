@@ -356,9 +356,6 @@ export default function ProjectsSection() {
       className="relative bg-[#0A0A0D] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 z-10 px-5 sm:px-8 md:px-10 pt-20 sm:pt-24 md:pt-32 pb-10"
     >
       <FadeIn className="flex flex-col items-center gap-4 mb-16 sm:mb-20 md:mb-28">
-        <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/45">
-          {'// SELECTED WORK'}
-        </span>
         <h2
           className="hero-heading font-black uppercase text-center leading-none tracking-tight"
           style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}

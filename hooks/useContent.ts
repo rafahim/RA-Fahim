@@ -13,6 +13,8 @@ import { fetchAbout } from '../services/about.service';
 import { fetchContactSettings } from '../services/contact.service';
 import { fetchWebsiteSettings } from '../services/website.service';
 import { fetchMarqueeImages } from '../services/marquee.service';
+import { fetchSkills } from '../services/skills.service';
+import { fetchTestimonials } from '../services/testimonials.service';
 import { ok } from '../types/api.types';
 import { useAsync, type AsyncState } from './useAsync';
 import type {
@@ -23,6 +25,8 @@ import type {
   ContactSettingsContent,
   WebsiteSettingsContent,
   MarqueeImageContent,
+  SkillContent,
+  TestimonialContent,
 } from '../types/content.types';
 
 /**
@@ -127,6 +131,35 @@ export function useWebsiteSettings(): AsyncState<WebsiteSettingsContent> & {
 export function useMarqueeImages(): AsyncState<MarqueeImageContent[]> & { refetch: () => void } {
   const fetcher = useMemo(
     () => () => (isSupabaseConfigured() ? fetchMarqueeImages() : Promise.resolve(ok([]))),
+    []
+  );
+  return useAsync(fetcher, []);
+}
+
+/**
+ * The "Tool Proficiency" meters shown in the About section. Same
+ * function serves both the public site and the admin management page —
+ * there's no draft/published split, an admin's list IS the public list.
+ * Empty (not an error) when Supabase isn't configured, so the section
+ * can fall back to the bundled placeholder skills instead of breaking.
+ */
+export function useSkills(): AsyncState<SkillContent[]> & { refetch: () => void } {
+  const fetcher = useMemo(
+    () => () => (isSupabaseConfigured() ? fetchSkills() : Promise.resolve(ok([]))),
+    []
+  );
+  return useAsync(fetcher, []);
+}
+
+/**
+ * Client quotes shown in the "What clients say" section. Same function
+ * serves both the public site and the admin management page. Empty (not
+ * an error) when Supabase isn't configured, so the section can fall back
+ * to the bundled placeholder testimonials instead of breaking.
+ */
+export function useTestimonials(): AsyncState<TestimonialContent[]> & { refetch: () => void } {
+  const fetcher = useMemo(
+    () => () => (isSupabaseConfigured() ? fetchTestimonials() : Promise.resolve(ok([]))),
     []
   );
   return useAsync(fetcher, []);

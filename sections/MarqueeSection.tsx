@@ -16,6 +16,56 @@ function toRows(urls: string[]): [string[], string[]] {
   return [urls.slice(0, mid), urls.slice(mid)];
 }
 
+/**
+ * Lets a row be grabbed with the mouse and dragged to scroll horizontally
+ * on desktop (touch/pen devices already get free native swipe-scrolling
+ * from `overflow-x-auto`, so this only steps in for `pointerType ===
+ * 'mouse'` to avoid fighting the native touch behaviour).
+ */
+function useHorizontalDragScroll<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let dragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      dragging = true;
+      startX = e.clientX;
+      startScrollLeft = el.scrollLeft;
+      el.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      el.scrollLeft = startScrollLeft - (e.clientX - startX);
+    };
+    const stopDragging = () => {
+      dragging = false;
+    };
+
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointermove', onPointerMove);
+    el.addEventListener('pointerup', stopDragging);
+    el.addEventListener('pointercancel', stopDragging);
+    el.addEventListener('pointerleave', stopDragging);
+
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown);
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup', stopDragging);
+      el.removeEventListener('pointercancel', stopDragging);
+      el.removeEventListener('pointerleave', stopDragging);
+    };
+  }, []);
+
+  return ref;
+}
+
 interface RowProps {
   images: string[];
   direction: 1 | -1;
@@ -24,21 +74,29 @@ interface RowProps {
 
 function MarqueeRow({ images, direction, offset }: RowProps) {
   const translate = useTransform(offset, (v) => (direction === 1 ? v - 200 : -(v - 200)));
+  const scrollRef = useHorizontalDragScroll<HTMLDivElement>();
 
   return (
-    <motion.div className="flex gap-3" style={{ x: translate, willChange: 'transform' }}>
-      {images.map((src, i) => (
-        <img
-          key={i}
-          src={src}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="rounded-2xl object-cover flex-shrink-0"
-          style={{ width: 420, height: 270 }}
-        />
-      ))}
-    </motion.div>
+    <div
+      ref={scrollRef}
+      className="no-scrollbar select-none overflow-x-auto overscroll-x-contain cursor-grab active:cursor-grabbing"
+      style={{ scrollbarWidth: 'none', touchAction: 'pan-x' }}
+    >
+      <motion.div className="flex gap-3 w-max" style={{ x: translate, willChange: 'transform' }}>
+        {images.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className="rounded-2xl object-cover flex-shrink-0"
+            style={{ width: 420, height: 270 }}
+          />
+        ))}
+      </motion.div>
+    </div>
   );
 }
 
@@ -116,6 +174,9 @@ export default function MarqueeSection() {
         <MarqueeRow images={repeated(row1, repeatCount)} direction={1} offset={offset} />
         <MarqueeRow images={repeated(row2, repeatCount)} direction={-1} offset={offset} />
       </div>
+      <p className="mt-4 text-center font-hud text-[9px] sm:text-[10px] text-[#F3F1EA]/30">
+        {'← DRAG TO EXPLORE →'}
+      </p>
     </section>
   );
 }

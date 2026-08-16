@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
@@ -19,14 +20,20 @@ const PORTRAIT_URL =
   'https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png';
 
 export default function HeroSection() {
-  const { data } = useAbout();
+  const { data, loading: aboutLoading } = useAbout();
   const { data: siteSettings } = useWebsiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const name = data?.name?.trim() || 'jack';
   const professionalTitle =
     data?.professionalTitle || 'a 3d creator driven by crafting striking and unforgettable projects';
-  const portraitUrl = data?.profileImageUrl || PORTRAIT_URL;
+  const availabilityStatus =
+    data?.availabilityStatus?.trim() || 'Available for new projects — 3D Creator';
+  // While the CMS profile image is still loading, don't fall back to the
+  // static placeholder portrait -- that causes a visible "wrong photo"
+  // flash right before the real one swaps in. Show nothing (skeleton)
+  // until we know for sure whether a custom image exists.
+  const portraitUrl = aboutLoading ? null : data?.profileImageUrl || PORTRAIT_URL;
 
   // Lock background scroll while the mobile menu is open so the open
   // panel doesn't fight the page underneath it.
@@ -55,7 +62,7 @@ export default function HeroSection() {
 
       <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
         <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
-          <a
+          <Link
             href="/"
             aria-label="Go to homepage"
             className="flex min-w-0 items-center gap-2.5 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
@@ -74,7 +81,7 @@ export default function HeroSection() {
                 ? siteSettings.websiteTitle.trim().toUpperCase()
                 : `${String(name).trim().toUpperCase() || 'JACK'}.3D`}
             </span>
-          </a>
+          </Link>
 
           {/* Desktop / tablet nav */}
           <div className="hidden sm:flex items-center gap-5 md:gap-9">
@@ -164,7 +171,7 @@ export default function HeroSection() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--render-amber)]" />
           </span>
           <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/60">
-            AVAILABLE FOR NEW PROJECTS — 3D CREATOR
+            {availabilityStatus.toUpperCase()}
           </span>
         </div>
       </FadeIn>
@@ -172,7 +179,10 @@ export default function HeroSection() {
       <FadeIn
         delay={0.2}
         y={40}
-        className="relative z-10 mt-3 sm:mt-3 md:-mt-2 px-6 md:px-10"
+        // Reserve room on the right for the "LIVE VIEWPORT" widget (only
+        // shown from md up) so FitText shrinks the name to fit beside it
+        // instead of running underneath and becoming unreadable.
+        className="relative z-10 mt-3 sm:mt-3 md:-mt-2 px-6 md:px-10 md:pr-52 lg:pr-64"
       >
         <FitText
           as="h1"
@@ -198,16 +208,23 @@ export default function HeroSection() {
             }}
           />
           <Magnet padding={150} strength={3}>
-            <div className="relative">
-              <img
-                src={portraitUrl}
-                alt={`${name}, 3D creator portrait`}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="relative w-full h-auto select-none"
-                draggable={false}
-              />
+            <div className="relative aspect-[3/4] w-full">
+              {portraitUrl ? (
+                <img
+                  src={portraitUrl}
+                  alt={`${name}, 3D creator portrait`}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="relative h-full w-full select-none object-contain"
+                  draggable={false}
+                />
+              ) : (
+                <div
+                  aria-hidden
+                  className="absolute inset-0 animate-pulse rounded-3xl bg-white/[0.04]"
+                />
+              )}
             </div>
           </Magnet>
         </FadeIn>

@@ -42,9 +42,6 @@ export default function ServicesSection() {
       />
 
       <FadeIn className="relative z-10 flex flex-col items-center gap-4 mb-16 sm:mb-20 md:mb-24">
-        <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/40">
-          {'// WHAT I OFFER'}
-        </span>
         <h2
           className="hero-heading font-black uppercase text-center leading-none tracking-tight"
           style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}

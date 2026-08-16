@@ -3,17 +3,24 @@
 import { Quote } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import CornerBrackets from '../components/CornerBrackets';
-import { testimonials } from '../lib/data';
+import { testimonials as fallbackTestimonials } from '../lib/data';
+import { useTestimonials } from '../hooks/useContent';
 
 /**
  * Client quotes, placed right before Contact -- the point in the page
  * where a visitor is deciding whether to reach out, so social proof
- * does the most work here.
- *
- * NOTE: `testimonials` in lib/data.ts currently holds placeholder
- * copy/names. Swap in real client quotes there before this goes live.
+ * does the most work here. CMS-driven via the `testimonials` table
+ * (managed from /admin/testimonials); falls back to the static list in
+ * lib/data.ts while loading or when Supabase isn't configured/empty.
  */
 export default function TestimonialsSection() {
+  const { data, loading } = useTestimonials();
+
+  const testimonials =
+    !loading && data && data.length > 0
+      ? data.map((t) => ({ quote: t.quote, name: t.clientName, role: t.clientRole ?? '' }))
+      : fallbackTestimonials;
+
   if (testimonials.length === 0) return null;
 
   return (
@@ -22,9 +29,6 @@ export default function TestimonialsSection() {
       className="relative bg-[#0A0A0D] px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-28"
     >
       <FadeIn className="flex flex-col items-center gap-4 mb-14 sm:mb-16 md:mb-20">
-        <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/45">
-          {'// CLIENT FEEDBACK'}
-        </span>
         <h2
           className="hero-heading font-black uppercase text-center leading-none tracking-tight"
           style={{ fontSize: 'clamp(2.25rem, 9vw, 110px)' }}

@@ -4,8 +4,8 @@ import FadeIn from '../components/FadeIn';
 import AnimatedText from '../components/AnimatedText';
 import ContactButton from '../components/ContactButton';
 import SkillBar from '../components/SkillBar';
-import { useAbout } from '../hooks/useContent';
-import { skillLevels } from '../lib/data';
+import { useAbout, useSkills } from '../hooks/useContent';
+import { skillLevels as fallbackSkillLevels } from '../lib/data';
 
 const MOON_ICON =
   'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png';
@@ -21,11 +21,19 @@ const ABOUT_COPY =
 
 export default function AboutSection() {
   const { data } = useAbout();
+  const { data: skillsData, loading: skillsLoading } = useSkills();
 
   const heading = data?.aboutHeading || 'About me';
   const description = data?.aboutDescription || ABOUT_COPY;
   const experience = data?.experience;
   const additionalInfo = data?.additionalInfo;
+
+  // Fall back to the static list while loading, or when Supabase isn't
+  // configured / has no rows yet, so the panel is never empty.
+  const skillLevels =
+    !skillsLoading && skillsData && skillsData.length > 0
+      ? skillsData.map((s) => ({ name: s.name, level: s.level, value: s.value }))
+      : fallbackSkillLevels;
 
   return (
     <section
@@ -83,12 +91,6 @@ export default function AboutSection() {
       </FadeIn>
 
       <div className="relative z-10 flex flex-col items-center text-center gap-10 sm:gap-12 md:gap-14">
-        <FadeIn delay={0} y={16}>
-          <span className="font-hud text-[10px] sm:text-xs text-[#F3F1EA]/45">
-            {'// WHO I AM'}
-          </span>
-        </FadeIn>
-
         <FadeIn delay={0} y={40} className="w-full max-w-full px-2">
           <h2
             className="hero-heading font-black uppercase leading-none tracking-tight break-words [overflow-wrap:anywhere]"

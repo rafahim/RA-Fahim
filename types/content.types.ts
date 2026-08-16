@@ -7,7 +7,7 @@
  * component.
  */
 
-import type { ProjectStatus, SocialLinkJson } from './database.types';
+import type { ProjectStatus, SkillLevelValue, SocialLinkJson } from './database.types';
 
 export interface ProjectContent {
   id: string;
@@ -55,6 +55,7 @@ export interface AboutContent {
   name: string | null;
   professionalTitle: string | null;
   experience: string | null;
+  availabilityStatus: string | null;
   aboutHeading: string | null;
   aboutDescription: string | null;
   additionalInfo: string | null;
@@ -97,4 +98,26 @@ export interface MarqueeImageContent {
   cloudinaryPublicId: string | null;
   displayOrder: number;
   createdAt: string;
+}
+
+/** A single tool-proficiency meter shown in the About section. */
+export interface SkillContent {
+  id: string;
+  name: string;
+  level: SkillLevelValue;
+  value: number;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** A client quote shown in the "What clients say" section. */
+export interface TestimonialContent {
+  id: string;
+  quote: string;
+  clientName: string;
+  clientRole: string | null;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
 }

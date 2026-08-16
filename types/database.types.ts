@@ -17,7 +17,11 @@
  * - messages           Contact-form submissions.
  * - admin_users         Allow-list of Supabase Auth users with admin access.
  * - marquee_images     Scrolling image strip shown below the Hero section.
+ * - skills             Tool proficiency meters shown in the About section.
+ * - testimonials       Client quotes shown in the "What clients say" section.
  */
+
+export type SkillLevelValue = 'Intermediate' | 'Advanced' | 'Expert';
 
 export type ProjectStatus = 'draft' | 'published';
 
@@ -154,6 +158,7 @@ export interface Database {
           name: string | null;
           professional_title: string | null;
           experience: string | null;
+          availability_status: string | null;
           about_heading: string | null;
           about_description: string | null;
           additional_info: string | null;
@@ -166,6 +171,7 @@ export interface Database {
           name?: string | null;
           professional_title?: string | null;
           experience?: string | null;
+          availability_status?: string | null;
           about_heading?: string | null;
           about_description?: string | null;
           additional_info?: string | null;
@@ -178,6 +184,7 @@ export interface Database {
           name?: string | null;
           professional_title?: string | null;
           experience?: string | null;
+          availability_status?: string | null;
           about_heading?: string | null;
           about_description?: string | null;
           additional_info?: string | null;
@@ -334,6 +341,66 @@ export interface Database {
           cloudinary_public_id?: string | null;
           display_order?: number;
           created_at?: string;
+        };
+        Relationships: [];
+      };
+      skills: {
+        Row: {
+          id: string;
+          name: string;
+          level: SkillLevelValue;
+          value: number;
+          display_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          level?: SkillLevelValue;
+          value?: number;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          level?: SkillLevelValue;
+          value?: number;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      testimonials: {
+        Row: {
+          id: string;
+          quote: string;
+          client_name: string;
+          client_role: string | null;
+          display_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          quote: string;
+          client_name: string;
+          client_role?: string | null;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          quote?: string;
+          client_name?: string;
+          client_role?: string | null;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
         };
         Relationships: [];
       };

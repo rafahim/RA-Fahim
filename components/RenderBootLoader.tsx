@@ -4,9 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 const TOTAL_FRAMES = 24;
+// Fixed minimum time the boot animation runs before it's allowed to
+// finish, so it never feels like a jarring instant flash even when
+// content resolves immediately (e.g. Supabase not configured). Kept
+// short so it never feels like it's stalling the site.
+const MIN_DURATION_MS = 500;
 // If content still isn't ready by this point, dismiss anyway rather than
 // hold the loader indefinitely (e.g. a slow/failed network request).
-const MAX_WAIT_MS = 4000;
+const MAX_WAIT_MS = 2200;
 
 interface RenderBootLoaderProps {
   /** True once the real CMS-driven content (name, portrait, etc.) has
@@ -20,7 +25,8 @@ interface RenderBootLoaderProps {
 /**
  * A first-impression loading screen styled like a render-engine progress
  * bar ("RENDERING… 100% · FRAME 24/24") instead of a generic spinner --
- * on-theme for a 3D artist's site and only ever seen for ~1.2s.
+ * on-theme for a 3D artist's site and only ever seen for ~0.5-0.7s
+ * (content usually resolves well within the safety-net window).
  */
 export default function RenderBootLoader({ contentReady = true }: RenderBootLoaderProps) {
   const [progress, setProgress] = useState(0);
@@ -30,7 +36,7 @@ export default function RenderBootLoader({ contentReady = true }: RenderBootLoad
 
   // Phase 1: animate 0 -> 99% once, on mount, regardless of content
   // state -- this is the part that always plays so the loader never
-  // feels frozen at 0.
+  // feels frozen at 0. Short (500ms) so it never outstays its welcome.
   useEffect(() => {
     if (prefersReducedMotion) {
       reachedCapRef.current = true;
@@ -40,7 +46,7 @@ export default function RenderBootLoader({ contentReady = true }: RenderBootLoad
 
     let raf = 0;
     const start = performance.now();
-    const duration = 1000;
+    const duration = MIN_DURATION_MS;
 
     const tick = (now: number) => {
       const t = Math.min((now - start) / duration, 1);
@@ -88,8 +94,8 @@ export default function RenderBootLoader({ contentReady = true }: RenderBootLoad
         <motion.div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[var(--void)]"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0, filter: 'blur(6px)', scale: 1.03 }}
+          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
         >
           <div
             className="absolute inset-0 bg-viewport-grid opacity-[0.25]"
@@ -97,9 +103,14 @@ export default function RenderBootLoader({ contentReady = true }: RenderBootLoad
             aria-hidden
           />
           <div className="relative flex flex-col items-center gap-5 px-6">
-            <span className="font-hud text-[10px] sm:text-xs tracking-[0.3em] text-[#F3F1EA]/50">
+            <motion.span
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="font-hud text-[10px] sm:text-xs tracking-[0.3em] text-[#F3F1EA]/50"
+            >
               RENDERING PREVIEW
-            </span>
+            </motion.span>
             <span
               className="hero-heading font-black leading-none tabular-nums"
               style={{ fontSize: 'clamp(3rem, 10vw, 6rem)' }}
