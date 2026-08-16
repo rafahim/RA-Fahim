@@ -61,6 +61,7 @@ export default function HeroSection() {
 
       <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
         <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- intentional: a real full reload, not a soft client-side nav */}
           <a
             href="/"
             aria-label="Go to homepage"
@@ -215,6 +216,7 @@ export default function HeroSection() {
             }}
           />
           <Magnet padding={150} strength={3}>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- intentional: a real full reload, not a soft client-side nav */}
             <a
               href="/"
               aria-label="Go to homepage"

@@ -24,8 +24,9 @@ export default function AuroraField({ className = '', variant = 'hero' }: Aurora
           left: '-12%',
           background:
             'radial-gradient(circle, rgba(76,141,255,0.42) 0%, rgba(76,141,255,0) 70%)',
-          filter: 'blur(60px)',
+          filter: 'blur(44px)',
           opacity,
+          willChange: 'transform',
           animation: 'aurora-drift-1 22s ease-in-out infinite',
         }}
       />
@@ -40,8 +41,9 @@ export default function AuroraField({ className = '', variant = 'hero' }: Aurora
           right: '-10%',
           background:
             'radial-gradient(circle, rgba(139,124,246,0.32) 0%, rgba(139,124,246,0) 70%)',
-          filter: 'blur(70px)',
+          filter: 'blur(52px)',
           opacity,
+          willChange: 'transform',
           animation: 'aurora-drift-2 26s ease-in-out infinite',
         }}
       />

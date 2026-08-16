@@ -80,7 +80,7 @@ function MarqueeRow({ images, direction, offset }: RowProps) {
     <div
       ref={scrollRef}
       className="no-scrollbar select-none overflow-x-auto overscroll-x-contain cursor-grab active:cursor-grabbing"
-      style={{ scrollbarWidth: 'none', touchAction: 'pan-x' }}
+      style={{ scrollbarWidth: 'none', touchAction: 'pan-y' }}
     >
       <motion.div className="flex gap-3 w-max" style={{ x: translate, willChange: 'transform' }}>
         {images.map((src, i) => (
