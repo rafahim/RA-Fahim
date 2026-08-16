@@ -16,71 +16,6 @@ function toRows(urls: string[]): [string[], string[]] {
   return [urls.slice(0, mid), urls.slice(mid)];
 }
 
-/**
- * Lets a row be grabbed with the mouse and dragged to scroll horizontally
- * on desktop (touch/pen devices already get free native swipe-scrolling
- * from `overflow-x-auto`, so this only steps in for `pointerType ===
- * 'mouse'` to avoid fighting the native touch behaviour).
- */
-function useHorizontalDragScroll<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    let dragging = false;
-    let startX = 0;
-    let startScrollLeft = 0;
-
-    const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') return;
-      dragging = true;
-      startX = e.clientX;
-      startScrollLeft = el.scrollLeft;
-      el.setPointerCapture(e.pointerId);
-    };
-    const onPointerMove = (e: PointerEvent) => {
-      if (!dragging) return;
-      el.scrollLeft = startScrollLeft - (e.clientX - startX);
-    };
-    const stopDragging = () => {
-      dragging = false;
-    };
-
-    el.addEventListener('pointerdown', onPointerDown);
-    el.addEventListener('pointermove', onPointerMove);
-    el.addEventListener('pointerup', stopDragging);
-    el.addEventListener('pointercancel', stopDragging);
-    el.addEventListener('pointerleave', stopDragging);
-
-    // Some browsers "helpfully" convert a vertical wheel/trackpad scroll
-    // into horizontal scrolling when it happens over a horizontally
-    // scrollable element like this row -- which eats the scroll and
-    // makes the whole page feel frozen the moment the cursor is over
-    // the images. When the gesture is clearly vertical, hand it to the
-    // page instead of letting this row swallow it.
-    const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        window.scrollBy({ top: e.deltaY, left: 0 });
-      }
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      el.removeEventListener('pointerdown', onPointerDown);
-      el.removeEventListener('pointermove', onPointerMove);
-      el.removeEventListener('pointerup', stopDragging);
-      el.removeEventListener('pointercancel', stopDragging);
-      el.removeEventListener('pointerleave', stopDragging);
-      el.removeEventListener('wheel', onWheel);
-    };
-  }, []);
-
-  return ref;
-}
-
 interface RowProps {
   images: string[];
   direction: 1 | -1;
@@ -89,14 +24,9 @@ interface RowProps {
 
 function MarqueeRow({ images, direction, offset }: RowProps) {
   const translate = useTransform(offset, (v) => (direction === 1 ? v - 200 : -(v - 200)));
-  const scrollRef = useHorizontalDragScroll<HTMLDivElement>();
 
   return (
-    <div
-      ref={scrollRef}
-      className="no-scrollbar select-none overflow-x-auto overscroll-x-contain cursor-grab active:cursor-grabbing"
-      style={{ scrollbarWidth: 'none', touchAction: 'pan-y' }}
-    >
+    <div className="overflow-hidden">
       <motion.div className="flex gap-3 w-max" style={{ x: translate, willChange: 'transform' }}>
         {images.map((src, i) => (
           <img
@@ -189,9 +119,6 @@ export default function MarqueeSection() {
         <MarqueeRow images={repeated(row1, repeatCount)} direction={1} offset={offset} />
         <MarqueeRow images={repeated(row2, repeatCount)} direction={-1} offset={offset} />
       </div>
-      <p className="mt-4 text-center font-hud text-[9px] sm:text-[10px] text-[#F3F1EA]/30">
-        {'← DRAG TO EXPLORE →'}
-      </p>
     </section>
   );
 }
