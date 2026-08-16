@@ -6,6 +6,28 @@ import { marqueeRow1, marqueeRow2 } from '../lib/data';
 import { useMarqueeImages } from '../hooks/useContent';
 import { isSupabaseConfigured } from '../lib/env';
 
+// Fixed tile size (see the <img> style below) -- used to work out the
+// exact pixel width of one un-repeated set of images, so the scroll
+// offset can be wrapped (modulo) into that width. Without wrapping, the
+// raw scroll-linked offset grows without bound as the page gets taller,
+// which eventually pushes the whole strip past the end of its repeated
+// tiles -- the row runs dry, the animation stalls/jumps, and moving the
+// page (or even just resizing) makes it visibly judder. Wrapping keeps
+// the same three-tile buffer looping forever, however far the page
+// scrolls, so the motion stays smooth and never runs out of images.
+const TILE_WIDTH = 420;
+const TILE_GAP = 12;
+
+function rowSetWidth(uniqueCount: number) {
+  return uniqueCount * TILE_WIDTH + Math.max(uniqueCount - 1, 0) * TILE_GAP;
+}
+
+function wrap(value: number, width: number) {
+  if (width <= 0) return value;
+  const mod = ((value % width) + width) % width;
+  return mod - width; // always in (-width, 0]
+}
+
 function repeated(arr: string[], times: number) {
   return Array.from({ length: times }, () => arr).flat();
 }
@@ -18,12 +40,17 @@ function toRows(urls: string[]): [string[], string[]] {
 
 interface RowProps {
   images: string[];
+  uniqueCount: number;
   direction: 1 | -1;
   offset: ReturnType<typeof useMotionValue<number>>;
 }
 
-function MarqueeRow({ images, direction, offset }: RowProps) {
-  const translate = useTransform(offset, (v) => (direction === 1 ? v - 200 : -(v - 200)));
+function MarqueeRow({ images, uniqueCount, direction, offset }: RowProps) {
+  const setWidth = rowSetWidth(uniqueCount);
+  const translate = useTransform(offset, (v) => {
+    const raw = direction === 1 ? v - 200 : -(v - 200);
+    return wrap(raw, setWidth);
+  });
 
   return (
     <div className="overflow-hidden">
@@ -37,7 +64,7 @@ function MarqueeRow({ images, direction, offset }: RowProps) {
             decoding="async"
             draggable={false}
             className="rounded-2xl object-cover flex-shrink-0"
-            style={{ width: 420, height: 270 }}
+            style={{ width: TILE_WIDTH, height: 270 }}
           />
         ))}
       </motion.div>
@@ -116,8 +143,18 @@ export default function MarqueeSection() {
         style={{ background: 'linear-gradient(180deg, var(--void) 0%, rgba(3,3,5,0) 100%)' }}
       />
       <div className="flex flex-col gap-3 [&_img]:transition-transform [&_img]:duration-500 [&_img]:ease-out [&_img:hover]:scale-[1.03]">
-        <MarqueeRow images={repeated(row1, repeatCount)} direction={1} offset={offset} />
-        <MarqueeRow images={repeated(row2, repeatCount)} direction={-1} offset={offset} />
+        <MarqueeRow
+          images={repeated(row1, repeatCount)}
+          uniqueCount={row1.length}
+          direction={1}
+          offset={offset}
+        />
+        <MarqueeRow
+          images={repeated(row2, repeatCount)}
+          uniqueCount={row2.length}
+          direction={-1}
+          offset={offset}
+        />
       </div>
     </section>
   );
