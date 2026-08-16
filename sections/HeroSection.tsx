@@ -65,6 +65,17 @@ export default function HeroSection() {
           <Link
             href="/"
             aria-label="Go to homepage"
+            onClick={(e) => {
+              // We're a single-page site -- everything lives on "/". If
+              // we're already there, Next.js sees no URL change and does
+              // nothing, so the logo would feel dead. Scroll to top
+              // ourselves in that case; let Link behave normally (real
+              // navigation) if we're coming from elsewhere, e.g. /admin.
+              if (window.location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
             className="flex min-w-0 items-center gap-2.5 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
           >
             {siteSettings?.logoUrl && (
