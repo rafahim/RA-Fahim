@@ -14,7 +14,7 @@ export default function AuroraField({ className = '', variant = 'hero' }: Aurora
   return (
     <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
       <div
-        className="absolute rounded-full"
+        className="aurora-blob-1 absolute rounded-full"
         style={{
           width: '55vw',
           height: '55vw',
@@ -27,11 +27,10 @@ export default function AuroraField({ className = '', variant = 'hero' }: Aurora
           filter: 'blur(44px)',
           opacity,
           willChange: 'transform',
-          animation: 'aurora-drift-1 22s ease-in-out infinite',
         }}
       />
       <div
-        className="absolute rounded-full"
+        className="aurora-blob-2 absolute rounded-full"
         style={{
           width: '45vw',
           height: '45vw',
@@ -44,7 +43,6 @@ export default function AuroraField({ className = '', variant = 'hero' }: Aurora
           filter: 'blur(52px)',
           opacity,
           willChange: 'transform',
-          animation: 'aurora-drift-2 26s ease-in-out infinite',
         }}
       />
     </div>

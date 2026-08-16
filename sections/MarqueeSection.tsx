@@ -54,12 +54,27 @@ function useHorizontalDragScroll<T extends HTMLElement>() {
     el.addEventListener('pointercancel', stopDragging);
     el.addEventListener('pointerleave', stopDragging);
 
+    // Some browsers "helpfully" convert a vertical wheel/trackpad scroll
+    // into horizontal scrolling when it happens over a horizontally
+    // scrollable element like this row -- which eats the scroll and
+    // makes the whole page feel frozen the moment the cursor is over
+    // the images. When the gesture is clearly vertical, hand it to the
+    // page instead of letting this row swallow it.
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        window.scrollBy({ top: e.deltaY, left: 0 });
+      }
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+
     return () => {
       el.removeEventListener('pointerdown', onPointerDown);
       el.removeEventListener('pointermove', onPointerMove);
       el.removeEventListener('pointerup', stopDragging);
       el.removeEventListener('pointercancel', stopDragging);
       el.removeEventListener('pointerleave', stopDragging);
+      el.removeEventListener('wheel', onWheel);
     };
   }, []);
 

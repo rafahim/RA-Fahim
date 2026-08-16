@@ -163,6 +163,25 @@ body {
   50% { transform: translate3d(-5%, 5%, 0) scale(1.05); }
 }
 
+.aurora-blob-1 {
+  animation: aurora-drift-1 22s ease-in-out infinite;
+}
+.aurora-blob-2 {
+  animation: aurora-drift-2 26s ease-in-out infinite;
+}
+
+/* Touch/coarse-pointer devices are almost always the lower-powered ones
+   (phones), and a continuously-animating blurred layer is one of the
+   more expensive things to keep repainting while the page scrolls.
+   Freeze the aurora blobs in place there -- same ambient look, none of
+   the ongoing repaint cost. */
+@media (pointer: coarse) {
+  .aurora-blob-1,
+  .aurora-blob-2 {
+    animation: none;
+  }
+}
+
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(0.85); }

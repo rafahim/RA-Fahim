@@ -33,12 +33,22 @@ export default function CustomCursor() {
     const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     const ring = { x: pos.x, y: pos.y };
     let raf = 0;
+    // Tracks the last hover state outside React so we only call
+    // setState when it actually flips (entering/leaving an interactive
+    // element) instead of on every pointermove -- pointermove can fire
+    // dozens of times a second, and re-rendering on each one was making
+    // the whole page feel heavy/laggy while the mouse moved.
+    let wasHoveringInteractive = false;
 
     const handleMove = (e: PointerEvent) => {
       pos.x = e.clientX;
       pos.y = e.clientY;
       const target = e.target as Element | null;
-      setHoveringInteractive(!!target?.closest(INTERACTIVE_SELECTOR));
+      const isHoveringInteractive = !!target?.closest(INTERACTIVE_SELECTOR);
+      if (isHoveringInteractive !== wasHoveringInteractive) {
+        wasHoveringInteractive = isHoveringInteractive;
+        setHoveringInteractive(isHoveringInteractive);
+      }
     };
 
     const animate = () => {
