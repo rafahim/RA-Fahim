@@ -24,7 +24,7 @@ export default function HeroSection() {
   const { data: siteSettings } = useWebsiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const name = data?.name?.trim() || 'jack';
+  const name = data?.name?.trim() || 'ra fahim';
   const professionalTitle =
     data?.professionalTitle || 'a 3d creator driven by crafting striking and unforgettable projects';
   const availabilityStatus =
@@ -90,7 +90,7 @@ export default function HeroSection() {
             <span className="truncate font-hud text-[10px] sm:text-xs text-[#F3F1EA]/70">
               {siteSettings?.websiteTitle?.trim()
                 ? siteSettings.websiteTitle.trim().toUpperCase()
-                : `${String(name).trim().toUpperCase() || 'JACK'}.3D`}
+                : `${String(name).trim().toUpperCase() || 'RA FAHIM'}.3D`}
             </span>
           </Link>
 

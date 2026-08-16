@@ -114,7 +114,7 @@ select v.quote, v.client_name, v.client_role, v.display_order
 from (
   values
     (
-      'Jack turned a vague brief into a render that sold the product before it even shipped. Fast, precise, and genuinely fun to collaborate with.',
+      'RA Fahim turned a vague brief into a render that sold the product before it even shipped. Fast, precise, and genuinely fun to collaborate with.',
       'Client Name',
       'Founder, Studio Name',
       0
@@ -126,7 +126,7 @@ from (
       1
     ),
     (
-      'Deadlines, communication, quality -- all solid. We''ve since brought Jack onto every 3D piece of our pipeline.',
+      'Deadlines, communication, quality -- all solid. We''ve since brought RA Fahim onto every 3D piece of our pipeline.',
       'Client Name',
       'Product Lead, Company Name',
       2

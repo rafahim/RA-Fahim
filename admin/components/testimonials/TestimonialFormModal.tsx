@@ -126,7 +126,7 @@ export default function TestimonialFormModal({
             value={quote}
             onChange={(e) => setQuote(e.target.value)}
             rows={4}
-            placeholder="Jack turned a vague brief into a render that sold the product..."
+            placeholder="RA Fahim turned a vague brief into a render that sold the product..."
             error={errors.quote}
           />
 

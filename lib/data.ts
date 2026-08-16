@@ -120,7 +120,7 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "Jack turned a vague brief into a render that sold the product before it even shipped. Fast, precise, and genuinely fun to collaborate with.",
+      "RA Fahim turned a vague brief into a render that sold the product before it even shipped. Fast, precise, and genuinely fun to collaborate with.",
     name: 'Client Name',
     role: 'Founder, Studio Name',
   },
@@ -132,7 +132,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     quote:
-      "Deadlines, communication, quality -- all solid. We've since brought Jack onto every 3D piece of our pipeline.",
+      "Deadlines, communication, quality -- all solid. We've since brought RA Fahim onto every 3D piece of our pipeline.",
     name: 'Client Name',
     role: 'Product Lead, Company Name',
   },

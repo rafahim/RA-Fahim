@@ -10,9 +10,9 @@ import './globals.css';
  * exactly like `index.html` + `useSiteMeta` did in the Vite app.
  */
 export const metadata: Metadata = {
-  title: 'Jack — Creative Developer & 3D Artist',
+  title: 'RA Fahim — Creative Developer & 3D Artist',
   description:
-    'Jack is a creative developer and 3D artist crafting striking, unforgettable digital work.',
+    'RA Fahim is a creative developer and 3D artist crafting striking, unforgettable digital work.',
   icons: {
     icon: '/favicon.svg',
   },

@@ -41,7 +41,7 @@ alter table public.about
 -- Seed sensible defaults so the public site isn't blank on a fresh database.
 update public.about
 set
-  name = coalesce(name, 'Jack'),
+  name = coalesce(name, 'RA Fahim'),
   professional_title = coalesce(
     professional_title,
     'A 3D creator driven by crafting striking and unforgettable projects'

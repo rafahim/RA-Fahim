@@ -30,7 +30,7 @@ export default function HomePage() {
 
   // The Hero/nav render CMS-driven name, title, portrait, and logo text.
   // Until that data actually arrives, they'd otherwise show the
-  // hardcoded defaults ("jack", the sample portrait) for a beat before
+  // hardcoded defaults ("RA Fahim", the sample portrait) for a beat before
   // swapping to the real content — a visible flash. Waiting for both
   // fetches here (each resolves near-instantly when Supabase isn't
   // configured, since the hooks skip the network call entirely) lets

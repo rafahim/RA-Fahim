@@ -1,4 +1,4 @@
-# Jack — 3D Creator Portfolio (Next.js)
+# RA Fahim — 3D Creator Portfolio (Next.js)
 
 A full-stack portfolio site with a public 3D-creator showcase and a
 Supabase-backed admin panel, built with **Next.js (App Router)**,

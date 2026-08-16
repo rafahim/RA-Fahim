@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 // finish, so it never feels like a jarring instant flash even when
 // content resolves immediately (e.g. Supabase not configured). Kept
 // short so it never feels like it's stalling the site.
-const MIN_DURATION_MS = 650;
+const MIN_DURATION_MS = 900;
 // If content still isn't ready by this point, dismiss anyway rather than
 // hold the loader indefinitely (e.g. a slow/failed network request).
 const MAX_WAIT_MS = 2200;
@@ -23,12 +23,12 @@ interface RenderBootLoaderProps {
 const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 /**
- * A first-impression reveal overlay: a soft amber glow blooms behind a
- * drawing-on ring (like a camera iris / render-engine viewport gizmo),
- * then the whole thing dissolves to unveil the page. Purely animated --
- * no progress percentage or frame counter -- so it reads as a polished
- * intro rather than a literal loading bar. Only ever seen for
- * ~0.65-1s (content usually resolves well within the safety-net window).
+ * A first-impression reveal overlay: the name settles gently into view
+ * with a soft rise + scale, a thin line draws itself underneath, then
+ * the whole mark and background dissolve to unveil the page. Calm and
+ * simple by design -- no HUD chrome, no progress text -- just a quiet,
+ * confident intro. Only ever seen for ~0.9-1.4s (content usually
+ * resolves well within the safety-net window).
  */
 export default function RenderBootLoader({ contentReady = true }: RenderBootLoaderProps) {
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
@@ -49,7 +49,7 @@ export default function RenderBootLoader({ contentReady = true }: RenderBootLoad
   // elapsed, dismiss the overlay.
   useEffect(() => {
     if (!contentReady || !minTimeElapsed) return;
-    const timer = setTimeout(() => setDone(true), 120);
+    const timer = setTimeout(() => setDone(true), 150);
     return () => clearTimeout(timer);
   }, [contentReady, minTimeElapsed]);
 
@@ -65,62 +65,43 @@ export default function RenderBootLoader({ contentReady = true }: RenderBootLoad
         <motion.div
           className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-[var(--void)]"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: 'blur(10px)', scale: 1.06 }}
-          transition={{ duration: 0.55, ease: EASE_OUT }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
         >
           <div
-            className="absolute inset-0 bg-viewport-grid opacity-[0.2]"
+            className="absolute inset-0 bg-viewport-grid opacity-[0.12]"
             style={{ maskImage: 'radial-gradient(circle at 50% 50%, black, transparent 70%)' }}
             aria-hidden
           />
 
-          {/* Soft ambient glow blooming behind the mark */}
           <motion.div
-            className="absolute h-[34vh] w-[34vh] rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle, rgba(255,138,61,0.35) 0%, rgba(255,138,61,0.08) 55%, transparent 75%)',
-            }}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [0, 0.9, 0.55], scale: [0.5, 1.2, 1] }}
-            transition={{ duration: prefersReducedMotion ? 0.3 : 1.5, ease: EASE_OUT }}
-            aria-hidden
-          />
-
-          {/* Drawing-on ring, like a camera iris / viewport gizmo settling into place */}
-          <svg width="112" height="112" viewBox="0 0 112 112" className="relative" aria-hidden>
-            <circle cx="56" cy="56" r="46" fill="none" stroke="rgba(243,241,234,0.12)" strokeWidth="1" />
-            <motion.circle
-              cx="56"
-              cy="56"
-              r="46"
-              fill="none"
-              stroke="var(--render-amber)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeDasharray="289"
-              style={{ transformOrigin: '56px 56px' }}
-              initial={{ strokeDashoffset: 289, rotate: -90 }}
-              animate={{
-                strokeDashoffset: prefersReducedMotion ? 0 : [289, 0],
-                rotate: prefersReducedMotion ? -90 : [-90, 270],
-              }}
-              transition={{ duration: prefersReducedMotion ? 0.01 : 1.15, ease: EASE_OUT }}
-            />
-            <motion.circle
-              cx="56"
-              cy="56"
-              r="4"
-              fill="var(--render-amber)"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [0, 1.4, 1], opacity: 1 }}
+            className="relative flex flex-col items-center gap-4"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: EASE_OUT }}
+          >
+            <motion.span
+              className="font-display text-[13vw] leading-none tracking-tight text-[var(--paper,#f3f1ea)] sm:text-[6.5vw]"
+              initial={{ opacity: 0, y: 18, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{
-                duration: 0.5,
-                delay: prefersReducedMotion ? 0 : 1,
+                duration: prefersReducedMotion ? 0.2 : 0.85,
+                ease: EASE_OUT,
+              }}
+            >
+              RA FAHIM
+            </motion.span>
+
+            <motion.div
+              className="h-[2px] rounded-full bg-[var(--render-amber)]"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: prefersReducedMotion ? 64 : [0, 64], opacity: 1 }}
+              transition={{
+                duration: prefersReducedMotion ? 0.2 : 0.6,
+                delay: prefersReducedMotion ? 0 : 0.45,
                 ease: EASE_OUT,
               }}
             />
-          </svg>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
