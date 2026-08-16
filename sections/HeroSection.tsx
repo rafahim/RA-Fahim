@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import FadeIn from '../components/FadeIn';
@@ -62,19 +61,16 @@ export default function HeroSection() {
 
       <FadeIn delay={0} y={-20} as="nav" className="relative z-30">
         <div className="mx-3 mt-3 sm:mx-6 sm:mt-6 flex items-center justify-between gap-4 rounded-full glass-panel px-5 py-3 md:px-8 md:py-4">
-          <Link
+          <a
             href="/"
             aria-label="Go to homepage"
             onClick={(e) => {
-              // We're a single-page site -- everything lives on "/". If
-              // we're already there, Next.js sees no URL change and does
-              // nothing, so the logo would feel dead. Scroll to top
-              // ourselves in that case; let Link behave normally (real
-              // navigation) if we're coming from elsewhere, e.g. /admin.
-              if (window.location.pathname === '/') {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }
+              // Always do a real, full page reload -- not a soft Next.js
+              // navigation -- so the logo/name reliably resets the whole
+              // page state (including the boot intro) no matter where
+              // we're clicking from.
+              e.preventDefault();
+              window.location.href = '/';
             }}
             className="flex min-w-0 items-center gap-2.5 rounded-full transition-opacity duration-200 hover:opacity-80 focus-visible:opacity-80"
           >
@@ -92,7 +88,7 @@ export default function HeroSection() {
                 ? siteSettings.websiteTitle.trim().toUpperCase()
                 : `${String(name).trim().toUpperCase() || 'RA FAHIM'}.3D`}
             </span>
-          </Link>
+          </a>
 
           {/* Desktop / tablet nav */}
           <div className="hidden sm:flex items-center gap-5 md:gap-9">
@@ -219,7 +215,17 @@ export default function HeroSection() {
             }}
           />
           <Magnet padding={150} strength={3}>
-            <div className="relative aspect-[3/4] w-full">
+            <a
+              href="/"
+              aria-label="Go to homepage"
+              onClick={(e) => {
+                // Same as the logo/name -- always a real full page
+                // reload, not a soft navigation.
+                e.preventDefault();
+                window.location.href = '/';
+              }}
+              className="relative block aspect-[3/4] w-full"
+            >
               {portraitUrl ? (
                 <img
                   src={portraitUrl}
@@ -236,7 +242,7 @@ export default function HeroSection() {
                   className="absolute inset-0 animate-pulse rounded-3xl bg-white/[0.04]"
                 />
               )}
-            </div>
+            </a>
           </Magnet>
         </FadeIn>
       </div>
