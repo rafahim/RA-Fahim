@@ -42,8 +42,11 @@ export default function CustomCursor() {
     };
 
     const animate = () => {
-      ring.x += (pos.x - ring.x) * 0.25;
-      ring.y += (pos.y - ring.y) * 0.25;
+      // Higher lerp factor = the trailing ring catches up to the pointer
+      // faster, so the cursor feels snappy/responsive instead of laggy,
+      // while still keeping a touch of the smooth trailing-gizmo look.
+      ring.x += (pos.x - ring.x) * 0.45;
+      ring.y += (pos.y - ring.y) * 0.45;
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)`;
       }
@@ -53,7 +56,7 @@ export default function CustomCursor() {
       raf = requestAnimationFrame(animate);
     };
 
-    window.addEventListener('pointermove', handleMove);
+    window.addEventListener('pointermove', handleMove, { passive: true });
     raf = requestAnimationFrame(animate);
 
     return () => {
