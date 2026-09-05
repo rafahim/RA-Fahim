@@ -44,16 +44,15 @@ function toDisplayProjects(cmsProjects: ProjectWithImages[]): DisplayProject[] {
 }
 
 /**
- * Builds the hover "process" sequence for the large preview slot out of
- * whatever images the project already has -- ordered as an early pass
- * through a final one, and labelled as such (see ProcessReveal's docs
- * for how to get a fully accurate wireframe/clay pass).
+ * Builds a simple project preview sequence from the bundled/project CMS
+ * images. Labels stay technology-agnostic so the component works for web,
+ * SaaS, e-commerce, and portfolio projects alike.
  */
 function toProcessStages(project: DisplayProject): ProcessStage[] {
   return [
-    { src: project.col1Image1, label: 'Wireframe' },
-    { src: project.col1Image2, label: 'Clay Render' },
-    { src: project.col2Image, label: 'Final Render' },
+    { src: project.col1Image1, label: 'Preview' },
+    { src: project.col1Image2, label: 'Interface' },
+    { src: project.col2Image, label: 'Project View' },
   ];
 }
 

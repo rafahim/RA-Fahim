@@ -107,7 +107,7 @@ export default function AboutAdminPage() {
               label="Experience"
               value={experience}
               onChange={(e) => setExperience(e.target.value)}
-              placeholder="5+ years"
+              placeholder="1 Year"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function AboutAdminPage() {
             label="Hero availability badge"
             value={availabilityStatus}
             onChange={(e) => setAvailabilityStatus(e.target.value)}
-            placeholder="Available for new projects — 3D Creator"
+            placeholder="Available for new projects — Web Developer"
           />
 
           <div className="border-t border-white/10 pt-6">

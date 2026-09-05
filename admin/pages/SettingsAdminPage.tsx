@@ -110,7 +110,7 @@ export default function SettingsAdminPage() {
             label="Website title"
             value={websiteTitle}
             onChange={(e) => setWebsiteTitle(e.target.value)}
-            placeholder="RA Fahim — 3D Creator"
+            placeholder="RA Fahim — Web Developer"
           />
 
           <Textarea

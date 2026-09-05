@@ -23,6 +23,7 @@ import FadeIn from '../components/FadeIn';
 import AuroraField from '../components/AuroraField';
 import { useContactSettings } from '../hooks/useContent';
 import { logError } from '../utils/errors';
+import { contactSettingsFallback } from '../lib/data';
 
 const FIELD_CLASS =
   'w-full rounded-xl border border-white/15 bg-white/[0.04] pl-11 pr-5 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors duration-200 ease-out focus:border-[var(--render-amber)] focus:bg-white/[0.07]';
@@ -88,6 +89,7 @@ function ContactCTAButton({ label, value, href }: ContactLinkProps) {
 
 export default function ContactSection() {
   const { data } = useContactSettings();
+  const contact = data ?? contactSettingsFallback;
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -103,17 +105,17 @@ export default function ContactSection() {
   const isSubmittingRef = useRef(false);
 
   const links: ContactLinkProps[] = [];
-  if (data?.email) links.push({ label: 'Email', value: data.email, href: `mailto:${data.email}` });
-  if (data?.phone) links.push({ label: 'Phone', value: data.phone, href: `tel:${data.phone}` });
-  if (data?.whatsapp) {
-    const digits = data.whatsapp.replace(/[^\d+]/g, '');
-    links.push({ label: 'WhatsApp', value: data.whatsapp, href: `https://wa.me/${digits.replace('+', '')}` });
+  if (contact.email) links.push({ label: 'Email', value: contact.email, href: `mailto:${contact.email}` });
+  if (contact.phone) links.push({ label: 'Phone', value: contact.phone, href: `tel:${contact.phone}` });
+  if (contact.whatsapp) {
+    const digits = contact.whatsapp.replace(/[^\d+]/g, '');
+    links.push({ label: 'WhatsApp', value: contact.whatsapp, href: `https://wa.me/${digits.replace('+', '')}` });
   }
-  if (data?.facebook) links.push({ label: 'Facebook', value: data.facebook, href: data.facebook });
-  if (data?.instagram) links.push({ label: 'Instagram', value: data.instagram, href: data.instagram });
-  if (data?.linkedin) links.push({ label: 'LinkedIn', value: data.linkedin, href: data.linkedin });
-  if (data?.behance) links.push({ label: 'Behance', value: data.behance, href: data.behance });
-  for (const link of data?.otherLinks ?? []) {
+  if (contact.facebook) links.push({ label: 'Facebook', value: contact.facebook, href: contact.facebook });
+  if (contact.instagram) links.push({ label: 'Instagram', value: contact.instagram, href: contact.instagram });
+  if (contact.linkedin) links.push({ label: 'LinkedIn', value: contact.linkedin, href: contact.linkedin });
+  if (contact.behance) links.push({ label: 'Behance', value: contact.behance, href: contact.behance });
+  for (const link of contact.otherLinks ?? []) {
     if (link.label && link.url) links.push({ label: link.label, value: link.url, href: link.url });
   }
 

@@ -13,27 +13,25 @@ import AuroraField from '../components/AuroraField';
 import Viewport3D from '../components/Viewport3D';
 import HudTelemetry from '../components/HudTelemetry';
 import { useAbout, useWebsiteSettings } from '../hooks/useContent';
+import { profileFallback, websiteSettingsFallback } from '../lib/data';
 
-const NAV_LINKS = ['About', 'Price', 'Projects', 'Contact'];
-
-const PORTRAIT_URL =
-  'https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png';
+const NAV_LINKS = ['About', 'Services', 'Projects', 'Contact'];
 
 export default function HeroSection() {
   const { data, loading: aboutLoading } = useAbout();
   const { data: siteSettings } = useWebsiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const name = data?.name?.trim() || 'ra fahim';
+  const name = data?.name?.trim() || profileFallback.name;
   const professionalTitle =
-    data?.professionalTitle || 'a 3d creator driven by crafting striking and unforgettable projects';
+    data?.professionalTitle || profileFallback.professionalTitle;
   const availabilityStatus =
-    data?.availabilityStatus?.trim() || 'Available for new projects — 3D Creator';
+    data?.availabilityStatus?.trim() || profileFallback.availabilityStatus;
   // While the CMS profile image is still loading, don't fall back to the
   // static placeholder portrait -- that causes a visible "wrong photo"
   // flash right before the real one swaps in. Show nothing (skeleton)
   // until we know for sure whether a custom image exists.
-  const portraitUrl = aboutLoading ? null : data?.profileImageUrl || PORTRAIT_URL;
+  const portraitUrl = aboutLoading ? profileFallback.profileImageUrl : data?.profileImageUrl || profileFallback.profileImageUrl;
 
   // Lock background scroll while the mobile menu is open so the open
   // panel doesn't fight the page underneath it.
@@ -90,7 +88,7 @@ export default function HeroSection() {
             <span className="truncate font-hud text-[10px] sm:text-xs text-[#F3F1EA]/70">
               {siteSettings?.websiteTitle?.trim()
                 ? siteSettings.websiteTitle.trim().toUpperCase()
-                : `${String(name).trim().toUpperCase() || 'RA FAHIM'}.3D`}
+                : websiteSettingsFallback.websiteTitle.toUpperCase()}
             </span>
           </Link>
 

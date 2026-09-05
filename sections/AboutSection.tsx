@@ -5,28 +5,19 @@ import AnimatedText from '../components/AnimatedText';
 import ContactButton from '../components/ContactButton';
 import SkillBar from '../components/SkillBar';
 import { useAbout, useSkills } from '../hooks/useContent';
-import { skillLevels as fallbackSkillLevels } from '../lib/data';
-
-const MOON_ICON =
-  'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png';
-const P59_OBJECT =
-  'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png';
-const LEGO_ICON =
-  'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png';
-const GROUP_134 =
-  'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png';
+import { profileFallback, skillLevels as fallbackSkillLevels } from '../lib/data';
 
 const ABOUT_COPY =
-  "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!";
+  profileFallback.aboutDescription;
 
 export default function AboutSection() {
   const { data } = useAbout();
   const { data: skillsData, loading: skillsLoading } = useSkills();
 
-  const heading = data?.aboutHeading || 'About me';
+  const heading = data?.aboutHeading || profileFallback.aboutHeading;
   const description = data?.aboutDescription || ABOUT_COPY;
-  const experience = data?.experience;
-  const additionalInfo = data?.additionalInfo;
+  const experience = data?.experience || profileFallback.experience;
+  const additionalInfo = data?.additionalInfo || profileFallback.additionalInfo;
 
   // Fall back to the static list while loading, or when Supabase isn't
   // configured / has no rows yet, so the panel is never empty.
@@ -46,49 +37,10 @@ export default function AboutSection() {
         style={{ background: 'linear-gradient(90deg, transparent, rgba(243,241,234,0.25), transparent)' }}
       />
 
-      <FadeIn
-        delay={0.1}
-        x={-80}
-        y={0}
-        duration={1.1}
-        className="absolute top-[6%] left-[1%] sm:left-[2%] md:left-[4%] w-[100px] sm:w-[140px] md:w-[180px] opacity-70"
-        style={{ animation: 'float-slow 7s ease-in-out infinite' }}
-      >
-        <img src={MOON_ICON} alt="" className="w-full h-auto" />
-      </FadeIn>
-
-      <FadeIn
-        delay={0.25}
-        x={-80}
-        y={0}
-        duration={1.1}
-        className="absolute bottom-[10%] left-[3%] sm:left-[6%] md:left-[10%] w-[85px] sm:w-[120px] md:w-[155px] opacity-70"
-        style={{ animation: 'float-slow 8.5s ease-in-out infinite 0.5s' }}
-      >
-        <img src={P59_OBJECT} alt="" className="w-full h-auto" />
-      </FadeIn>
-
-      <FadeIn
-        delay={0.15}
-        x={80}
-        y={0}
-        duration={1.1}
-        className="absolute top-[6%] right-[1%] sm:right-[2%] md:right-[4%] w-[100px] sm:w-[140px] md:w-[180px] opacity-70"
-        style={{ animation: 'float-slow 7.5s ease-in-out infinite 0.2s' }}
-      >
-        <img src={LEGO_ICON} alt="" className="w-full h-auto" />
-      </FadeIn>
-
-      <FadeIn
-        delay={0.3}
-        x={80}
-        y={0}
-        duration={1.1}
-        className="absolute bottom-[10%] right-[3%] sm:right-[6%] md:right-[10%] w-[110px] sm:w-[145px] md:w-[190px] opacity-70"
-        style={{ animation: 'float-slow 8s ease-in-out infinite 0.7s' }}
-      >
-        <img src={GROUP_134} alt="" className="w-full h-auto" />
-      </FadeIn>
+      <div aria-hidden className="pointer-events-none absolute left-[4%] top-[8%] h-24 w-24 rounded-full border border-white/10 opacity-60 sm:h-32 sm:w-32" style={{ boxShadow: '0 0 80px rgba(139,124,246,0.12)' }} />
+      <div aria-hidden className="pointer-events-none absolute right-[5%] top-[12%] h-20 w-20 rounded-2xl border border-[#4C8DFF]/15 rotate-12 opacity-60 sm:h-28 sm:w-28" />
+      <div aria-hidden className="pointer-events-none absolute bottom-[10%] left-[8%] h-16 w-16 rounded-full border border-[#4C8DFF]/15 opacity-50 sm:h-24 sm:w-24" />
+      <div aria-hidden className="pointer-events-none absolute bottom-[12%] right-[8%] h-24 w-24 rounded-full border border-white/10 opacity-50 sm:h-32 sm:w-32" />
 
       <div className="relative z-10 flex flex-col items-center text-center gap-10 sm:gap-12 md:gap-14">
         <FadeIn delay={0} y={40} className="w-full max-w-full px-2">

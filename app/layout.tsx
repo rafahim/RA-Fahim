@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ErrorBoundary from '../components/ErrorBoundary';
 import './globals.css';
+import { websiteSettingsFallback } from '../lib/data';
 
 /**
  * Static fallback metadata (used before/without the admin-managed
@@ -10,11 +11,10 @@ import './globals.css';
  * exactly like `index.html` + `useSiteMeta` did in the Vite app.
  */
 export const metadata: Metadata = {
-  title: 'RA Fahim — Creative Developer & 3D Artist',
-  description:
-    'RA Fahim is a creative developer and 3D artist crafting striking, unforgettable digital work.',
+  title: websiteSettingsFallback.seoTitle,
+  description: websiteSettingsFallback.seoDescription,
   icons: {
-    icon: '/favicon.svg',
+    icon: websiteSettingsFallback.faviconUrl,
   },
 };
 
